@@ -138,7 +138,14 @@ disable=print-statement,
         xreadlines-attribute,
         deprecated-sys-function,
         exception-escape,
-        comprehension-escape
+        comprehension-escape,
+# --- default list is above here, our own list is below here ---
+# While pylint's recommendations to keep the number of arguments, local
+# variables and branches low is generally a good one, I don't want it to
+# be enforced, because there are times when it's okay to break these:
+        too-many-arguments,
+        too-many-branches,
+        too-many-locals
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -219,8 +226,9 @@ spelling-store-unknown-words=no
 
 # List of note tags to take in consideration, separated by a comma.
 notes=FIXME,
-      XXX,
-      TODO
+      XXX
+# Removing TODO so we can use that to note long-term to do items
+      # TODO
 
 
 [TYPECHECK]
@@ -419,7 +427,10 @@ good-names=i,
            k,
            ex,
            Run,
-           _
+           _,
+# --- default list is above here, our own list is below here ---
+# Allow logger as a global name in each module, because this seems to follow general recommended convention:
+           logger
 
 # Include a hint for the correct naming format with invalid-name.
 include-naming-hint=no
