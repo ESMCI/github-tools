@@ -140,11 +140,13 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
 # --- default list is above here, our own list is below here ---
-# While pylint's recommendations to keep the number of arguments, local
-# variables and branches low is generally a good one, I don't want it to
-# be enforced, because there are times when it's okay to break these:
+# While pylint's recommendations to keep the number of arguments,
+# branches, instance attributes and local variables low is generally a
+# good one, I don't want it to be enforced, because there are times when
+# it's okay to break these:
         too-many-arguments,
         too-many-branches,
+        too-many-instance-attributes,
         too-many-locals
 
 # Enable the message, report, category or checker with the given id(s). You can

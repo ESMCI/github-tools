@@ -33,6 +33,7 @@ lint: FORCE
 
 .PHONY: clean
 clean: FORCE
+	rm -rf ghtools/__pycache__/
 	find . -name '*.pyc' -exec rm {} \;
 
 FORCE:
