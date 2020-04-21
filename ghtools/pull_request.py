@@ -17,7 +17,7 @@ class PullRequest:
         url: string
         body: string
         comments: iterable of Comments
-            Note that this is shallow-copied; it can be immutable
+            Note that this is shallow-copied
         """
         self._pr_number = pr_number
         self._title = title
@@ -25,7 +25,7 @@ class PullRequest:
         self._creation_date = creation_date
         self._url = url
         self._body = body
-        self._comments = comments
+        self._comments = sorted(comments, key=lambda c: c.get_creation_date())
 
     def __repr__(self):
         return(type(self).__name__ +

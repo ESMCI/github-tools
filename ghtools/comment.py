@@ -56,3 +56,7 @@ class Comment:
         if isinstance(other, Comment):
             return self.__dict__ == other.__dict__
         return NotImplemented
+
+    def get_creation_date(self):
+        """Return the creation date of this comment"""
+        return self._creation_date
