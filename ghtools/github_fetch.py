@@ -1,7 +1,7 @@
 """Functions for fetching information from GitHub using the GitHub API"""
 
 from github import Github
-from ghtools.comment import Comment
+from ghtools.comment import Comment, CommentType
 from ghtools.pull_request import PullRequest
 
 def fetch_pull_request(repo, pr_number, access_token=None):
@@ -22,21 +22,35 @@ def fetch_pull_request(repo, pr_number, access_token=None):
     gh_repo = gh_inst.get_repo(repo)
     gh_pr = gh_repo.get_pull(pr_number)
 
-    conversation_comments = []
+    comments = []
     for gh_comment in gh_pr.get_issue_comments():
-        this_comment = Comment(username=gh_comment.user.login,
+        this_comment = Comment(comment_type=CommentType.CONVERSATION_COMMENT,
+                               username=gh_comment.user.login,
                                creation_date=gh_comment.created_at,
                                url=gh_comment.html_url,
                                content=gh_comment.body)
-        conversation_comments.append(this_comment)
+        comments.append(this_comment)
 
-    review_comments = []
     for gh_comment in gh_pr.get_comments():
-        this_comment = Comment(username=gh_comment.user.login,
+        this_comment = Comment(comment_type=CommentType.PR_LINE_COMMENT,
+                               username=gh_comment.user.login,
                                creation_date=gh_comment.created_at,
                                url=gh_comment.html_url,
                                content=gh_comment.body)
-        review_comments.append(this_comment)
+        comments.append(this_comment)
+
+    for gh_comment in gh_pr.get_reviews():
+        if gh_comment.body:
+            # GitHub creates a Pull Request Review for any PR line comments that have been
+            # made - even individual line comments made outside a review, or when you make
+            # a set of line comments in a review but don't leave an overall
+            # comment. Exclude empty reviews that are created in these circumstances.
+            this_comment = Comment(comment_type=CommentType.PR_REVIEW_COMMENT,
+                                   username=gh_comment.user.login,
+                                   creation_date=gh_comment.submitted_at,
+                                   url=gh_comment.html_url,
+                                   content=gh_comment.body)
+            comments.append(this_comment)
 
     return PullRequest(pr_number=pr_number,
                        title=gh_pr.title,
@@ -44,5 +58,4 @@ def fetch_pull_request(repo, pr_number, access_token=None):
                        creation_date=gh_pr.created_at,
                        url=gh_pr.html_url,
                        body=gh_pr.body,
-                       conversation_comments=conversation_comments,
-                       review_comments=review_comments)
+                       comments=comments)

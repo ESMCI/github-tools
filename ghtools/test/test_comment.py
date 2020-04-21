@@ -5,7 +5,7 @@
 
 import unittest
 import datetime
-from ghtools.comment import Comment
+from ghtools.comment import Comment, CommentType
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -17,7 +17,8 @@ class TestComment(unittest.TestCase):
     @staticmethod
     def _create_comment():
         """Returns a basic Comment object"""
-        return Comment(username="me",
+        return Comment(comment_type=CommentType.PR_LINE_COMMENT,
+                       username="me",
                        creation_date=datetime.datetime(2020, 1, 1),
                        url="https://github.com/org/repo/1#issuecomment-2",
                        content="My content")

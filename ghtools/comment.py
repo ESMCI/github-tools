@@ -2,19 +2,28 @@
 """
 
 import textwrap
+from enum import Enum, auto
+
+class CommentType(Enum):
+    """Valid types for the comment_type argument to the Comment constructor"""
+    CONVERSATION_COMMENT = auto()
+    PR_LINE_COMMENT = auto()
+    PR_REVIEW_COMMENT = auto()
 
 class Comment:
     """Class for holding information about a single GitHub comment"""
 
-    def __init__(self, username, creation_date, url, content):
+    def __init__(self, comment_type, username, creation_date, url, content):
         """Initialize a comment object.
 
         Args:
+        comment_type: one of the options in CommentType (e.g., CommentType.CONVERSATION_COMMENT)
         username: string
         creation_date: datetime
         url: string
         content: string
         """
+        self._type = comment_type
         self._username = username
         self._creation_date = creation_date
         self._url = url
@@ -22,17 +31,23 @@ class Comment:
 
     def __repr__(self):
         return(type(self).__name__ +
-               "(username={username}, "
+               "(comment_type={comment_type}, "
+               "username={username}, "
                "creation_date={creation_date}, "
                "url={url}, "
-               "content={content})".format(username=repr(self._username),
+               "content={content})".format(comment_type=str(self._type),
+                                           username=repr(self._username),
                                            creation_date=repr(self._creation_date),
                                            url=repr(self._url),
                                            content=repr(self._content)))
 
     def __str__(self):
-        return("Comment by {username} on {creation_date} ({url}):\n"
-               "{content}".format(username=self._username,
+        type_as_str = {CommentType.CONVERSATION_COMMENT: "Conversation comment",
+                       CommentType.PR_LINE_COMMENT: "PR line comment",
+                       CommentType.PR_REVIEW_COMMENT: "PR review comment"}
+        return("{comment_type} by {username} on {creation_date} ({url}):\n"
+               "{content}".format(comment_type=type_as_str[self._type],
+                                  username=self._username,
                                   creation_date=self._creation_date,
                                   url=self._url,
                                   content=textwrap.indent(self._content, 4*" ")))

@@ -6,7 +6,7 @@
 import unittest
 import datetime
 from ghtools.pull_request import PullRequest
-from ghtools.comment import Comment
+from ghtools.comment import Comment, CommentType
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -16,14 +16,16 @@ class TestPullRequest(unittest.TestCase):
     """Tests of PullRequest class"""
 
     @staticmethod
-    def _simple_comment(comment_id, content):
+    def _simple_comment(comment_type, comment_id, content):
         """Return a Comment object with some hard-coded pieces
 
         Args:
+        comment_type (one of the options in CommentType (e.g., CommentType.CONVERSATION_COMMENT))
         comment_id (integer): used in URL
         content (string)
         """
-        return Comment(username="you",
+        return Comment(comment_type=comment_type,
+                       username="you",
                        creation_date=datetime.datetime(2020, 1, 2),
                        url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
                        content=content)
@@ -37,11 +39,12 @@ class TestPullRequest(unittest.TestCase):
                            creation_date=datetime.datetime(2020, 1, 1),
                            url="https://github.com/org/repo/1",
                            body="PR body",
-                           conversation_comments=(TestPullRequest._simple_comment(1, "comment 1"),
-                                                  TestPullRequest._simple_comment(2, "comment 2")),
-                           review_comments=(TestPullRequest._simple_comment(3, "rc 1"),
-                                            TestPullRequest._simple_comment(4, "rc 2"),
-                                            TestPullRequest._simple_comment(5, "rc 3")))
+                           comments=(TestPullRequest._simple_comment(
+                               CommentType.CONVERSATION_COMMENT, 1, "comment"),
+                                     TestPullRequest._simple_comment(
+                                         CommentType.PR_LINE_COMMENT, 2, "line comment"),
+                                     TestPullRequest._simple_comment(
+                                         CommentType.PR_REVIEW_COMMENT, 3, "review comment")))
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a PullRequest object should result in an equivalent object"""
