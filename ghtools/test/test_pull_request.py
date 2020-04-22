@@ -58,6 +58,8 @@ class TestPullRequest(unittest.TestCase):
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a PullRequest object should result in an equivalent object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
         pr = self._create_pr()
         # pylint: disable=eval-used
         pr2 = eval(repr(pr))
