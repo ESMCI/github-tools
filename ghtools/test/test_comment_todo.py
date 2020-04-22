@@ -68,8 +68,8 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo("  - [ ] todo")
         self.assertEqual(result, "todo")
 
-    def test_search_multipleUL(self):
-        """Make sure we find a todo with multiple unordered list markers"""
+    def test_search_multipleUOL(self):
+        """Make sure we find a todo with multiple unordered & ordered list markers"""
         result = search_line_for_todo("- 1.  +   30) [ ] todo")
         self.assertEqual(result, "todo")
 
