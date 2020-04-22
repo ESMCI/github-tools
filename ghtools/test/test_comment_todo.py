@@ -162,6 +162,11 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo("- [  ] todo")
         self.assertIsNone(result)
 
+    def test_search_otherTextFirst_fails(self):
+        """If there is other text on the line before the checkbox stuff, the search should fail"""
+        result = search_line_for_todo("hi - [ ] todo")
+        self.assertIsNone(result)
+
     def test_search_quoteJustBeforeCheckbox_fails(self):
         """If there are both list and quote markers, but the last is a quote, should fail"""
         result = search_line_for_todo("> - > [ ] todo")
