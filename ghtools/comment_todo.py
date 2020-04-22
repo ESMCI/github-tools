@@ -14,22 +14,26 @@ _UL = r"[\-\+\*]\s+"
 # whitespace characters
 _OL = r"\d+[\.\)]\s+"
 
-# list: one or more occurrences of either _ol or _ul
-# - note that something like '- - 1. + * 2. ' IS parsed as the start of a (very weird)
-#   list item on GitHub
-# - note that '(?:' starts a non-capturing group
-_LIST = r"(?:" + _UL + r"|" + _OL + r")+"
+# list: either _ol or _ul; note that '(?:' starts a non-capturing group
+_LIST = r"(?:" + _UL + r"|" + _OL + r")"
 
 # checkbox: '[ ]' followed by one or more whitespace characters
 _CHECKBOX = r"\[ \]\s+"
 
+# quote: '>' followed by any number of spaces
+_QUOTE = r">\s*"
+
+# any number of list or quote markers
+_ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
+
 # a todo item on a line is given by:
 # - at the start of the line, any amount of whitespace
+# - any number of list or quote markers
 # - a list indicator
 # - a checkbox
 # - at least one whitespace character, followed by any other characters (this last piece
 #   is put in a capture group)
-_TODO = r"^\s*" + _LIST + _CHECKBOX + r"(\S.+)"
+_TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
 # ------------------------------------------------------------------------

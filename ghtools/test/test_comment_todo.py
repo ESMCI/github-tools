@@ -10,6 +10,7 @@ from ghtools.comment_todo import search_line_for_todo
 # to make readable unit test names
 # pylint: disable=invalid-name
 
+#pylint: disable=too-many-public-methods
 class TestCommentTodo(unittest.TestCase):
     """Tests of comment_todo module"""
 
@@ -72,6 +73,37 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo("- 1.  +   30) [ ] todo")
         self.assertEqual(result, "todo")
 
+    def test_search_quoted(self):
+        """Make sure we find a quoted todo"""
+        result = search_line_for_todo(">- [ ] todo")
+        self.assertEqual(result, "todo")
+
+    def test_search_quotedWithSpace(self):
+        """Make sure we find a quoted todo with a space after the quote marker"""
+        result = search_line_for_todo("> - [ ] todo")
+        self.assertEqual(result, "todo")
+
+    def test_search_multipleQuotes(self):
+        """Make sure we find a quoted todo with multiple quote markers"""
+        result = search_line_for_todo(">>> > > - [ ] todo")
+        self.assertEqual(result, "todo")
+
+    def test_search_multipleAlternatingQuotesAndLists1(self):
+        """Make sure we find a todo with a mix of quote and list markers"""
+        result = search_line_for_todo("> - > - > - [ ] todo")
+        self.assertEqual(result, "todo")
+
+    def test_search_multipleAlternatingQuotesAndLists2(self):
+        """Make sure we find a todo with a mix of quote and list markers"""
+        result = search_line_for_todo(">- >- >- [ ] todo")
+        self.assertEqual(result, "todo")
+
+    def test_search_multipleAlternatingQuotesAndLists3(self):
+        """Make sure we find a todo with a mix of quote and list markers"""
+        # This is a really weird case, but GitHub treats it as a checkbox, so we will, too
+        result = search_line_for_todo(">- >> + >1. - [ ] todo")
+        self.assertEqual(result, "todo")
+
     # ------------------------------------------------------------------------
     # Tests of search_line_for_todo: searches NOT expected to find something
     # ------------------------------------------------------------------------
@@ -114,6 +146,11 @@ class TestCommentTodo(unittest.TestCase):
     def test_search_onlyWhitespaceAfterCheckbox_fails(self):
         """If there is only whitespace after the checkbox character, the search should fail"""
         result = search_line_for_todo("- [ ]  ")
+        self.assertIsNone(result)
+
+    def test_search_quoteJustBeforeCheckbox_fails(self):
+        """If there are both list and quote markers, but the last is a quote, should fail"""
+        result = search_line_for_todo("> - > [ ] todo")
         self.assertIsNone(result)
 
 if __name__ == '__main__':
