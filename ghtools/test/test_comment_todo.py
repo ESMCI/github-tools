@@ -67,9 +67,29 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo("  - [ ] todo")
         self.assertEqual(result, "todo")
 
+    def test_search_multipleUL(self):
+        """Make sure we find a todo with multiple unordered list markers"""
+        result = search_line_for_todo("- 1.  +   30) [ ] todo")
+        self.assertEqual(result, "todo")
+
     # ------------------------------------------------------------------------
     # Tests of search_line_for_todo: searches NOT expected to find something
     # ------------------------------------------------------------------------
+
+    def test_search_checkedCheckbox_fails(self):
+        """If the checkbox is checked, the search should fail"""
+        result = search_line_for_todo("- [x] todo")
+        self.assertIsNone(result)
+
+    def test_search_noListMarker_fails(self):
+        """If there is no list marker, the search should fail"""
+        result = search_line_for_todo("[ ] todo")
+        self.assertIsNone(result)
+
+    def test_search_noCheckbox_fails(self):
+        """If there is no checkbox, the search should fail"""
+        result = search_line_for_todo("- todo")
+        self.assertIsNone(result)
 
     def test_search_noWhitespaceAfterUL_fails(self):
         """If there is no whitespace after an unordered list marker, the search should fail"""
@@ -79,6 +99,11 @@ class TestCommentTodo(unittest.TestCase):
     def test_search_noWhitespaceAfterOL_fails(self):
         """If there is no whitespace after an ordered list marker, the search should fail"""
         result = search_line_for_todo("1.[ ] todo")
+        self.assertIsNone(result)
+
+    def test_search_noPeriodOrParenAfterNumber_fails(self):
+        """If there is no . or ) after a number, the search should fail"""
+        result = search_line_for_todo("1 [ ] todo")
         self.assertIsNone(result)
 
     def test_search_noWhitespaceAfterCheckbox_fails(self):

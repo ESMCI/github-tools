@@ -14,8 +14,11 @@ _UL = r"[\-\+\*]\s+"
 # whitespace characters
 _OL = r"\d+[\.\)]\s+"
 
-# list: either _ol or _ul; note that '(?:' starts a non-capturing group
-_LIST = r"(?:" + _UL + r"|" + _OL + r")"
+# list: one or more occurrences of either _ol or _ul
+# - note that something like '- - 1. + * 2. ' IS parsed as the start of a (very weird)
+#   list item on GitHub
+# - note that '(?:' starts a non-capturing group
+_LIST = r"(?:" + _UL + r"|" + _OL + r")+"
 
 # checkbox: '[ ]' followed by one or more whitespace characters
 _CHECKBOX = r"\[ \]\s+"
