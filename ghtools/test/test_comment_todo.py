@@ -104,6 +104,15 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo(">- >> + >1. - [ ] todo")
         self.assertEqual(result, "todo")
 
+    def test_search_extraListMarkerRightBeforeCheckbox(self):
+        """Make sure we find a todo with an extra list marker right before the checkbox"""
+        # If there is a valid list item marker with a space after it, then another list
+        # item marker without a space after it directly before the checkbox, GitHub
+        # renders this as a checkbox, so we'll treat it as one, too - even though I'm not
+        # sure if this is a feature or a bug.
+        result = search_line_for_todo("- -[ ] todo")
+        self.assertEqual(result, "todo")
+
     # ------------------------------------------------------------------------
     # Tests of search_line_for_todo: searches NOT expected to find something
     # ------------------------------------------------------------------------
@@ -151,6 +160,12 @@ class TestCommentTodo(unittest.TestCase):
     def test_search_quoteJustBeforeCheckbox_fails(self):
         """If there are both list and quote markers, but the last is a quote, should fail"""
         result = search_line_for_todo("> - > [ ] todo")
+        self.assertIsNone(result)
+
+    def test_search_twoListMarkersRightBeforeCheckbox_fails(self):
+        """If there are two list markers right before the checkbox, should fail"""
+        # Even though "- -[ ] todo" renders as a checkbox, "- --[ ] todo" does not
+        result = search_line_for_todo("- --[ ] todo")
         self.assertIsNone(result)
 
 if __name__ == '__main__':

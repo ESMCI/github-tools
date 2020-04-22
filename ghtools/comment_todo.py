@@ -7,15 +7,17 @@ import re
 # Regular expressions
 # ------------------------------------------------------------------------
 
-# unordered list: '-' or '+' or '*' followed by one or more whitespace characters
-_UL = r"[\-\+\*]\s+"
+# unordered list identifier: '-' or '+' or '*'
+_UL = r"[\-\+\*]"
 
-# ordered list: one or more digits followed by '.' or ')' followed by one or more
-# whitespace characters
-_OL = r"\d+[\.\)]\s+"
+# ordered list identifier: one or more digits followed by '.' or ')'
+_OL = r"\d+[\.\)]"
 
-# list: either _ol or _ul; note that '(?:' starts a non-capturing group
-_LIST = r"(?:" + _UL + r"|" + _OL + r")"
+# one unordered or ordered list identifier; note that "(?:" starts a non-capturing group
+_UOL = r"(?:" + _UL + r"|" + _OL + r")"
+
+# list: either _OL or _UL followed by one or more whitespace characters
+_LIST = _UOL + r"\s+"
 
 # checkbox: '[ ]' followed by one or more whitespace characters
 _CHECKBOX = r"\[ \]\s+"
@@ -30,10 +32,12 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 # - at the start of the line, any amount of whitespace
 # - any number of list or quote markers
 # - a list indicator
+# - an optional unordered or ordered list identifier without a space (this may be a bug in
+#   GitHub's parsing, but we are following GitHub's behavior in this respect)
 # - a checkbox
 # - at least one whitespace character, followed by any other characters (this last piece
 #   is put in a capture group)
-_TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _CHECKBOX + r"(\S.+)"
+_TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
 # ------------------------------------------------------------------------
