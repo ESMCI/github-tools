@@ -3,6 +3,7 @@
 
 import textwrap
 from enum import Enum, auto
+from ghtools.comment_todo import search_line_for_todo, CommentTodo
 
 class CommentType(Enum):
     """Valid types for the comment_type argument to the Comment constructor"""
@@ -60,3 +61,20 @@ class Comment:
     def get_creation_date(self):
         """Return the creation date of this comment"""
         return self._creation_date
+
+    def get_todos(self):
+        """Return a list of all lines in the comment that represent todos
+
+        Returns a list of CommentTodo objects
+        """
+        todos = []
+        for line in self._content.splitlines():
+            todo_text = search_line_for_todo(line)
+            if todo_text is not None:
+                todos.append(CommentTodo(
+                    username=self._username,
+                    creation_date=self._creation_date,
+                    url=self._url,
+                    text=todo_text))
+
+        return todos

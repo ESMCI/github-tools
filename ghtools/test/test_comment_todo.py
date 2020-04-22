@@ -118,6 +118,11 @@ class TestSearchLineForTodo(unittest.TestCase):
     # Tests of search_line_for_todo: searches NOT expected to find something
     # ------------------------------------------------------------------------
 
+    def test_search_emptyString_fails(self):
+        """If the input is an empty string, the search should fail"""
+        result = search_line_for_todo("")
+        self.assertIsNone(result)
+
     def test_search_checkedCheckbox_fails(self):
         """If the checkbox is checked, the search should fail"""
         result = search_line_for_todo("- [x] todo")
