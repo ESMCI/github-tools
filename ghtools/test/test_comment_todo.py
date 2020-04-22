@@ -4,15 +4,16 @@
 """
 
 import unittest
-from ghtools.comment_todo import search_line_for_todo
+import datetime
+from ghtools.comment_todo import search_line_for_todo, CommentTodo
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
 # pylint: disable=invalid-name
 
 #pylint: disable=too-many-public-methods
-class TestCommentTodo(unittest.TestCase):
-    """Tests of comment_todo module"""
+class TestSearchLineForTodo(unittest.TestCase):
+    """Tests of search_line_for_todo function"""
 
     # ------------------------------------------------------------------------
     # Tests of search_line_for_todo: searches expected to find something
@@ -177,6 +178,30 @@ class TestCommentTodo(unittest.TestCase):
         # Even though "- -[ ] todo" renders as a checkbox, "- --[ ] todo" does not
         result = search_line_for_todo("- --[ ] todo")
         self.assertIsNone(result)
+
+# ------------------------------------------------------------------------
+# Tests of the CommentTodo class
+# ------------------------------------------------------------------------
+
+class TestCommentTodo(unittest.TestCase):
+    """Tests of CommentTodo class"""
+
+    @staticmethod
+    def _create_comment_todo():
+        """Returns a basic CommentTodo object"""
+        return CommentTodo(username="me",
+                           creation_date=datetime.datetime(2020, 1, 1),
+                           url="https://github.com/org/repo/1#issuecomment-2",
+                           text="My text")
+
+    def test_repr_resultsInEqualObject(self):
+        """The repr of a CommentTodo object should result in an equivalent object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
+        t = self._create_comment_todo()
+        # pylint: disable=eval-used
+        t2 = eval(repr(t))
+        self.assertEqual(t2, t)
 
 if __name__ == '__main__':
     unittest.main()

@@ -86,4 +86,42 @@ def search_line_for_todo(line):
 # ------------------------------------------------------------------------
 
 class CommentTodo:
-    """Class for holding a todo item extracted from a GitHub comment"""
+    """Class for holding a single todo item extracted from a GitHub comment"""
+
+    def __init__(self, username, creation_date, url, text):
+        """Initialize a CommentTodo object.
+
+        Args:
+        username: string
+        creation_date: datetime
+        url: string
+        text: string - this should be a single line, containing a single to do item,
+           without the leading '- [ ]' or similar; typically, it will be the output from
+           the search_line_for_todo function
+        """
+        self._username = username
+        self._creation_date = creation_date
+        self._url = url
+        self._text = text
+
+    def __repr__(self):
+        return(type(self).__name__ +
+               "(username={username}, "
+               "creation_date={creation_date}, "
+               "url={url}, "
+               "text={text})".format(username=repr(self._username),
+                                     creation_date=repr(self._creation_date),
+                                     url=repr(self._url),
+                                     text=repr(self._text)))
+
+    def __str__(self):
+        return("{text} ({username} at {creation_date}, <{url}>".format(
+            text=self._text,
+            username=self._username,
+            creation_date=self._creation_date,
+            url=self._url))
+
+    def __eq__(self, other):
+        if isinstance(other, CommentTodo):
+            return self.__dict__ == other.__dict__
+        return NotImplemented
