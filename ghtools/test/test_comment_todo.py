@@ -124,7 +124,7 @@ class TestCommentTodo(unittest.TestCase):
 
     def test_search_noListMarker_fails(self):
         """If there is no list marker, the search should fail"""
-        result = search_line_for_todo("[ ] todo")
+        result = search_line_for_todo(" [ ] todo")
         self.assertIsNone(result)
 
     def test_search_noCheckbox_fails(self):
