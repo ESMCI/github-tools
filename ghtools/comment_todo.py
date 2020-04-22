@@ -37,6 +37,29 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 # - a checkbox
 # - at least one whitespace character, followed by any other characters (this last piece
 #   is put in a capture group)
+#
+# See https://github.github.com/gfm for GitHub's Markdown specification
+#
+# Known issues:
+# - The following are rendered as checkboxes by GitHub, but not by this regex:
+#   - List item where the text is on the next line, like this:
+#     *
+#       [ ] todo
+#
+#     Here we are just parsing things line-by-line. So treating the above as a todo would
+#     add a significant amount of work, and it seems very unlikely to come up in
+#     practice. If this is an issue, a workaround would be to treat a line with some
+#     number of spaces followed by '[ ] ' as a to do item, even though it technically
+#     isn't.
+#
+# - Our regex is too general/accepting in the following ways:
+#   - We accept any number of digits (GitHub limits the number of digits allowed in an
+#     ordered list item - I think to 9)
+#   - We accept any number of consecutive spaces (GitHub limits the number of consecutive
+#     spaces - I think to 4)
+#   - We accept something that looks like a tasklist item inside a multiline code block:
+#     We parse line by line, detecting when we're inside a code block would add a
+#     significant amount of work.
 _TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
