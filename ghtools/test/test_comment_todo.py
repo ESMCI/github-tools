@@ -157,6 +157,11 @@ class TestCommentTodo(unittest.TestCase):
         result = search_line_for_todo("- [ ]  ")
         self.assertIsNone(result)
 
+    def test_search_multipleSpacesInBrackets_fails(self):
+        """If there are multiple spaces inside the brackets, the search should fail"""
+        result = search_line_for_todo("- [  ] todo")
+        self.assertIsNone(result)
+
     def test_search_quoteJustBeforeCheckbox_fails(self):
         """If there are both list and quote markers, but the last is a quote, should fail"""
         result = search_line_for_todo("> - > [ ] todo")
