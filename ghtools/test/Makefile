@@ -12,7 +12,7 @@ else
 endif
 
 # common args for running tests
-TEST_ARGS=-m unittest discover
+TEST_ARGS=-m unittest discover --start-directory ../..
 
 ifeq ($(debug), not-set)
     ifeq ($(verbose), not-set)
@@ -28,9 +28,7 @@ else
 endif
 
 PYLINT=pylint
-PYLINT_ARGS=-j 4 --rcfile=ghtools/.pylintrc
-PYLINT_SRC = \
-	ghtools
+PYLINT_ARGS=-j 4 --rcfile=.pylintrc
 
 .PHONY: test
 test: FORCE
@@ -38,7 +36,7 @@ test: FORCE
 
 .PHONY: lint
 lint: FORCE
-	$(PYLINT) $(PYLINT_ARGS) $(PYLINT_SRC)
+	$(PYLINT) $(PYLINT_ARGS) ../
 
 .PHONY: clean
 clean: FORCE
