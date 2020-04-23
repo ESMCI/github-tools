@@ -45,6 +45,13 @@ def _commandline_args():
 
     description = """
 Tool for querying GitHub Pull Requests
+
+To show all comments in a pull request:
+    gh-pr-query -r REPO -p PR_NUMBER -s
+
+To show all of the outstanding todo items in all comments in a pull request
+(i.e., all unchecked checkboxes):
+    gh-pr-query -r REPO -p PR_NUMBER -t
 """
 
     parser = argparse.ArgumentParser(
@@ -64,10 +71,10 @@ Tool for querying GitHub Pull Requests
     parser.add_argument('-a', '--access-token',
                         help='GitHub personal access token (like a password)')
 
-    # FIXME(wjs, 2020-04-23) Add a -s/--summary argument. Ensure that at least one of
-    # --todo or --summary is given. Also add an --output-dir optional argument, and ensure
-    # that this is given if both --todo and --summary are given. (But actually, maybe
-    # initially, just allow one of the two without the --output-dir option; can add that
-    # as a later feature.)
+    # FIXME(wjs, 2020-04-23) Add a -s/--show-comments argument. Ensure that at least one
+    # of --todo or --show-comments is given. Also add an --output-dir optional argument,
+    # and ensure that this is given if both --todo and --show-comments are given. (But
+    # actually, maybe initially, just allow one of the two without the --output-dir
+    # option; can add that as a later feature.)
     args = parser.parse_args()
     return args
