@@ -208,5 +208,10 @@ class TestCommentTodo(unittest.TestCase):
         t2 = eval(repr(t))
         self.assertEqual(t2, t)
 
+    def test_str_works(self):
+        """Just make sure that the str method runs successfully"""
+        t = self._create_comment_todo()
+        _ = str(t)
+
 if __name__ == '__main__':
     unittest.main()
