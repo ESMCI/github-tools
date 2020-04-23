@@ -67,9 +67,12 @@ To show all of the outstanding todo items in all comments in a pull request
     parser.add_argument('-t', '--todo', action='store_true',
                         help='Print all outstanding todo items in this PR')
 
-    # FIXME(wjs, 2020-04-23) Add more detailed help for this, pointing to the GitHub help page.
     parser.add_argument('-a', '--access-token',
-                        help='GitHub personal access token (like a password)')
+                        help='GitHub personal access token (like a password)\n'
+                        'This is not required, but without it, GitHub severely limits\n'
+                        'the number of queries that can be run in a period of time.\n'
+                        'For more information, see:\n'
+                        'https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line') # pylint: disable=line-too-long
 
     # FIXME(wjs, 2020-04-23) Add a -s/--show-comments argument. Ensure that at least one
     # of --todo or --show-comments is given. Also add an --output-dir optional argument,
