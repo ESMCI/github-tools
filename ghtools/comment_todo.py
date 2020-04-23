@@ -123,7 +123,7 @@ class CommentTodo:
                                      text=repr(self._text)))
 
     def __str__(self):
-        return("{text} ({username} at {creation_date}, <{url}>".format(
+        return("{text} ({username} at {creation_date}, <{url}>)".format(
             text=self._text,
             username=self._username,
             creation_date=self._creation_date,
