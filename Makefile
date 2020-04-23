@@ -1,4 +1,4 @@
-# Makefile for running tests on the python code here
+# Makefile for running tests
 
 # These variables can be overridden from the command-line
 python = not-set
@@ -11,10 +11,19 @@ else
     PYTHON=python
 endif
 
-ifneq ($(debug), not-set)
-    TEST_ARGS+=--debug
-endif
-ifneq ($(verbose), not-set)
+# common args for running tests
+TEST_ARGS=-m unittest discover
+
+ifeq ($(debug), not-set)
+    ifeq ($(verbose), not-set)
+        # summary only output
+        TEST_ARGS+=--buffer
+    else
+        # show individual test summary
+        TEST_ARGS+=--buffer --verbose
+    endif
+else
+    # show detailed test output
     TEST_ARGS+=--verbose
 endif
 
@@ -25,7 +34,7 @@ PYLINT_SRC = \
 
 .PHONY: test
 test: FORCE
-	$(PYTHON) ./run_tests $(TEST_ARGS)
+	$(PYTHON) $(TEST_ARGS)
 
 .PHONY: lint
 lint: FORCE
@@ -33,8 +42,7 @@ lint: FORCE
 
 .PHONY: clean
 clean: FORCE
-	rm -rf ghtools/__pycache__/
-	find . -name '*.pyc' -exec rm {} \;
+	find . -name '__pycache__' -type d -exec rm -rf {} \;
 
 FORCE:
 
