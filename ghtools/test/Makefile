@@ -30,9 +30,16 @@ endif
 PYLINT=pylint
 PYLINT_ARGS=-j 4 --rcfile=.pylintrc
 
+all: test lint
+test: utest stest
+
 .PHONY: utest
 utest: FORCE
 	$(PYTHON) $(TEST_ARGS) --pattern 'test_unit_*.py'
+
+.PHONY: stest
+stest: FORCE
+	$(PYTHON) $(TEST_ARGS) --pattern 'test_sys_*.py'
 
 .PHONY: lint
 lint: FORCE
