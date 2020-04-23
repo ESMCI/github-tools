@@ -30,14 +30,18 @@ def gh_pr_query(repo, pr_number, todo, show_comments, access_token=None):
                                       pr_number=pr_number,
                                       access_token=access_token)
     if show_comments:
-        print(pull_request)
+        print_pr_comments(pull_request)
     if todo:
         print_pr_todos(pull_request)
 
+def print_pr_comments(pull_request):
+    """Print all comments for the given PullRequest"""
+    for comment in pull_request.get_comments():
+        print(str(comment) + "\n\n")
+
 def print_pr_todos(pull_request):
     """Print all outstanding todo items for the given PullRequest"""
-    todos = pull_request.get_todos()
-    for todo in todos:
+    for todo in pull_request.get_todos():
         print("- {}\n".format(str(todo)))
 
 # ========================================================================

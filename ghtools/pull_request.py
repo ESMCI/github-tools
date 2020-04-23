@@ -28,6 +28,10 @@ class PullRequest:
         self._body = body
         self._comments = sorted(comments, key=lambda c: c.get_creation_date())
 
+    def get_comments(self):
+        """Return a list of all comments in the PR"""
+        return self._comments
+
     def get_todos(self):
         """Return a list of all lines in the PR body and all comments that represent todos
 
