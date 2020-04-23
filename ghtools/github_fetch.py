@@ -26,7 +26,7 @@ def fetch_pull_request(repo, pr_number, access_token=None):
     for gh_comment in gh_pr.get_issue_comments():
         this_comment = Comment(comment_type=CommentType.CONVERSATION_COMMENT,
                                username=gh_comment.user.login,
-                               creation_date=gh_comment.created_at,
+                               creation_date=gh_comment.created_at.astimezone(),
                                url=gh_comment.html_url,
                                content=gh_comment.body)
         comments.append(this_comment)
@@ -34,7 +34,7 @@ def fetch_pull_request(repo, pr_number, access_token=None):
     for gh_comment in gh_pr.get_comments():
         this_comment = Comment(comment_type=CommentType.PR_LINE_COMMENT,
                                username=gh_comment.user.login,
-                               creation_date=gh_comment.created_at,
+                               creation_date=gh_comment.created_at.astimezone(),
                                url=gh_comment.html_url,
                                content=gh_comment.body)
         comments.append(this_comment)
@@ -47,7 +47,7 @@ def fetch_pull_request(repo, pr_number, access_token=None):
             # comment. Exclude empty reviews that are created in these circumstances.
             this_comment = Comment(comment_type=CommentType.PR_REVIEW_COMMENT,
                                    username=gh_comment.user.login,
-                                   creation_date=gh_comment.submitted_at,
+                                   creation_date=gh_comment.submitted_at.astimezone(),
                                    url=gh_comment.html_url,
                                    content=gh_comment.body)
             comments.append(this_comment)
@@ -55,7 +55,7 @@ def fetch_pull_request(repo, pr_number, access_token=None):
     return PullRequest(pr_number=pr_number,
                        title=gh_pr.title,
                        username=gh_pr.user.login,
-                       creation_date=gh_pr.created_at,
+                       creation_date=gh_pr.created_at.astimezone(),
                        url=gh_pr.html_url,
                        body=gh_pr.body,
                        comments=comments)
