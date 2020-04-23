@@ -1,1 +1,11 @@
-__pycache__
+# editor files
+*.swp
+*~
+
+# mac files
+.DS_Store
+
+# python generated files
+__pycache__/
+*.py[cod]
+*$py.class
