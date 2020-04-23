@@ -30,6 +30,28 @@ class Comment:
         self._url = url
         self._content = content
 
+    def get_creation_date(self):
+        """Return the creation date of this comment"""
+        return self._creation_date
+
+    def get_todos(self):
+        """Return a list of all lines in the comment that represent todos
+
+        Returns a list of CommentTodo objects (or an empty list if there are no todos in
+        this comment)
+        """
+        todos = []
+        for line in self._content.splitlines():
+            todo_text = search_line_for_todo(line)
+            if todo_text is not None:
+                todos.append(CommentTodo(
+                    username=self._username,
+                    creation_date=self._creation_date,
+                    url=self._url,
+                    text=todo_text))
+
+        return todos
+
     def __repr__(self):
         return(type(self).__name__ +
                "(comment_type={comment_type}, "
@@ -57,25 +79,3 @@ class Comment:
         if isinstance(other, Comment):
             return self.__dict__ == other.__dict__
         return NotImplemented
-
-    def get_creation_date(self):
-        """Return the creation date of this comment"""
-        return self._creation_date
-
-    def get_todos(self):
-        """Return a list of all lines in the comment that represent todos
-
-        Returns a list of CommentTodo objects (or an empty list if there are no todos in
-        this comment)
-        """
-        todos = []
-        for line in self._content.splitlines():
-            todo_text = search_line_for_todo(line)
-            if todo_text is not None:
-                todos.append(CommentTodo(
-                    username=self._username,
-                    creation_date=self._creation_date,
-                    url=self._url,
-                    text=todo_text))
-
-        return todos

@@ -108,6 +108,10 @@ class CommentTodo:
         self._url = url
         self._text = text
 
+    def get_text(self):
+        """Return the text of this todo"""
+        return self._text
+
     def __repr__(self):
         return(type(self).__name__ +
                "(username={username}, "
@@ -129,7 +133,3 @@ class CommentTodo:
         if isinstance(other, CommentTodo):
             return self.__dict__ == other.__dict__
         return NotImplemented
-
-    def get_text(self):
-        """Return the text of this todo"""
-        return self._text
