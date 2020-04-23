@@ -65,7 +65,7 @@ class Comment:
     def get_todos(self):
         """Return a list of all lines in the comment that represent todos
 
-        Returns a list of CommentTodo objects
+        Returns a list of CommentTodo objects (or an empty list if there are no todos in this comment)
         """
         todos = []
         for line in self._content.splitlines():

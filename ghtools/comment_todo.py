@@ -40,6 +40,10 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 #
 # See https://github.github.com/gfm for GitHub's Markdown specification
 #
+# Here, we err on the side of being too general/accepting - i.e., we prefer false
+# positives (calling something a checkbox when it really isn't) than false negatives
+# (missing a true checkbox).
+#
 # Known issues:
 # - The following are rendered as checkboxes by GitHub, but not by this regex:
 #   - List item where the text is on the next line, like this:
