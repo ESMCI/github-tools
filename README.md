@@ -54,3 +54,7 @@ when setting up your access token.
 
 You should protect this access token as you would a password. Tips for
 how to do this are given in the wiki.
+
+## Demo additions
+
+This change is just for the sake of making a demo PR.
