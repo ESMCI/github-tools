@@ -56,6 +56,9 @@ To show all comments in a pull request:
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
     gh-pr-query -r REPO -p PR_NUMBER -t
+
+Example:
+    gh-pr-query -r ESMCI/github-tools -p 1 -t
 """
 
     parser = argparse.ArgumentParser(
