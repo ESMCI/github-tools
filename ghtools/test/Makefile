@@ -38,9 +38,5 @@ test: FORCE
 lint: FORCE
 	$(PYLINT) $(PYLINT_ARGS) ../
 
-.PHONY: clean
-clean: FORCE
-	find . -name '__pycache__' -type d -exec rm -rf {} \;
-
 FORCE:
 
