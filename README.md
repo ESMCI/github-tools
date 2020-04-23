@@ -41,7 +41,7 @@ For more detailed help, run
 
 ##### Showing all comments
 
-```bash
+```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -s
 
 PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
@@ -79,7 +79,7 @@ PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:
 
 ##### Showing all outstanding todo items
 
-```bash
+```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 - Do a task suggested in the body (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
