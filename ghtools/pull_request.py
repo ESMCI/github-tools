@@ -2,6 +2,7 @@
 """
 
 import textwrap
+from ghtools.comment import Comment, CommentType
 
 class PullRequest:
     """Class for holding information about a GitHub Pull Request"""
@@ -64,3 +65,22 @@ class PullRequest:
         if isinstance(other, PullRequest):
             return self.__dict__ == other.__dict__
         return NotImplemented
+
+    def get_todos(self):
+        """Return a list of all lines in the PR body and all comments that represent todos
+
+        Returns a list of CommentTodo objects
+        """
+        todos = []
+        todos.extend(self._body_as_comment().get_todos())
+        for one_comment in self._comments:
+            todos.extend(one_comment.get_todos())
+        return todos
+
+    def _body_as_comment(self):
+        """Return a Comment object representing the body of this PullRequest"""
+        return Comment(comment_type=CommentType.CONVERSATION_COMMENT,
+                       username=self._username,
+                       creation_date=self._creation_date,
+                       url=self._url,
+                       content=self._body)
