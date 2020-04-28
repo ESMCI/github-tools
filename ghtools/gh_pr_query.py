@@ -12,24 +12,24 @@ def main():
     args = _commandline_args()
     gh_pr_query(repo=args.repo,
                 pr_number=args.pr_number,
-                show_comments=args.show_comments,
+                show=args.show,
                 todo=args.todo,
                 access_token=args.access_token)
 
-def gh_pr_query(repo, pr_number, todo, show_comments, access_token=None):
+def gh_pr_query(repo, pr_number, todo, show, access_token=None):
     """Implementation of the gh-pr-query command
 
     Args:
     repo: string - GitHub repository, in the form ORG/REPO
     pr_number: integer - Pull Request number
-    show_comments: boolean - Whether to print all comments from this PR
+    show: boolean - Whether to print all comments from this PR
     todo: boolean - Whether to print all outstanding todo items in this PR
     access_token: string - A GitHub personal access token
     """
     pull_request = fetch_pull_request(repo=repo,
                                       pr_number=pr_number,
                                       access_token=access_token)
-    if show_comments:
+    if show:
         print(pull_request)
     if todo:
         print_pr_todos(pull_request)
@@ -73,7 +73,7 @@ Example:
 
     mode = parser.add_mutually_exclusive_group(required=True)
 
-    mode.add_argument('-s', '--show-comments', action='store_true',
+    mode.add_argument('-s', '--show', action='store_true',
                       help='Print all comments from this PR')
 
     mode.add_argument('-t', '--todo', action='store_true',
