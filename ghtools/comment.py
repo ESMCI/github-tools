@@ -4,6 +4,7 @@
 import textwrap
 from enum import Enum, auto
 from ghtools.comment_todo import search_line_for_todo, CommentTodo
+from ghtools.utils import fill_multiparagraph
 
 class CommentType(Enum):
     """Valid types for the comment_type argument to the Comment constructor"""
@@ -68,12 +69,13 @@ class Comment:
         type_as_str = {CommentType.CONVERSATION_COMMENT: "Conversation comment",
                        CommentType.PR_LINE_COMMENT: "PR line comment",
                        CommentType.PR_REVIEW_COMMENT: "PR review comment"}
+        content_filled = fill_multiparagraph(self._content, 76)
         return("{comment_type} by {username} on {creation_date} ({url}):\n"
                "{content}".format(comment_type=type_as_str[self._type],
                                   username=self._username,
                                   creation_date=self._creation_date,
                                   url=self._url,
-                                  content=textwrap.indent(self._content, 4*" ")))
+                                  content=textwrap.indent(content_filled, 4*" ")))
 
     def __eq__(self, other):
         if isinstance(other, Comment):
