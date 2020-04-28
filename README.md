@@ -26,7 +26,7 @@ Tool for querying GitHub Pull Requests
 
 To show all comments in a pull request:
 
-    gh-pr-query -r REPO -p PR_NUMBER -c
+    gh-pr-query -r REPO -p PR_NUMBER -s
 
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
@@ -42,7 +42,7 @@ For more detailed help, run
 ##### Showing all comments
 
 ```
-$ ./gh-pr-query -r esmci/github-tools -p 1 -c
+$ ./gh-pr-query -r esmci/github-tools -p 1 -s
 PR line comment by billsacks on 2020-04-23 19:25:28-06:00 (https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434):
     I would like the following changes to this line:
 
