@@ -1,6 +1,7 @@
 """Functions implementing gh-pr-query tool"""
 
 import argparse
+import textwrap
 from ghtools.github_fetch import fetch_pull_request
 
 # ========================================================================
@@ -36,9 +37,11 @@ def gh_pr_query(repo, pr_number, todo, show, access_token=None):
 
 def print_pr_todos(pull_request):
     """Print all outstanding todo items for the given PullRequest"""
+    wrapper = textwrap.TextWrapper(width=80, subsequent_indent='  ', break_long_words=False)
+
     todos = pull_request.get_todos()
     for todo in todos:
-        print("- {}\n".format(str(todo)))
+        print(wrapper.fill("- {}".format(str(todo))) + "\n")
 
 # ========================================================================
 # Private functions
