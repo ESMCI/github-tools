@@ -24,20 +24,44 @@ path.
 
 Tool for querying GitHub Pull Requests
 
-To show all comments in a pull request:
-
-    gh-pr-query -r REPO -p PR_NUMBER -s
-
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
 
     gh-pr-query -r REPO -p PR_NUMBER -t
+
+To show all comments in a pull request:
+
+    gh-pr-query -r REPO -p PR_NUMBER -s
 
 For more detailed help, run
 
     gh-pr-query -h
     
 #### Examples
+
+##### Showing all outstanding todo items
+
+```
+$ ./gh-pr-query -r esmci/github-tools -p 1 -t
+- Do a task suggested in the body
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+
+- Do a task from the body's second checklist
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+
+- Please change "just" to "only"
+  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+
+- Please change "PR" to "Pull Request"
+  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+
+- Add a section on Demo deletions
+  (billsacks at 2020-04-23 19:25:49-06:00, <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
+
+- I should do that
+  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
+
+```
 
 ##### Showing all comments
 
@@ -74,30 +98,6 @@ Conversation comment by billsacks on 2020-04-23 19:26:39-06:00 (https://github.c
 
 Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.com/ESMCI/github-tools/pull/1#issuecomment-618616900):
     Closing this PR that was for demonstration purposes only.
-```
-
-##### Showing all outstanding todo items
-
-```
-$ ./gh-pr-query -r esmci/github-tools -p 1 -t
-- Do a task suggested in the body
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
-
-- Do a task from the body's second checklist
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
-
-- Please change "just" to "only"
-  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
-
-- Please change "PR" to "Pull Request"
-  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
-
-- Add a section on Demo deletions
-  (billsacks at 2020-04-23 19:25:49-06:00, <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
-
-- I should do that
-  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
-
 ```
 
 ## Providing a personal access token
