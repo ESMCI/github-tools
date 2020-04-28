@@ -2,6 +2,7 @@
 """
 
 import re
+import textwrap
 
 # ------------------------------------------------------------------------
 # Regular expressions
@@ -123,8 +124,13 @@ class CommentTodo:
                                      text=repr(self._text)))
 
     def __str__(self):
-        return("{text} ({username} at {creation_date}, <{url}>)".format(
-            text=self._text,
+        text_as_list_item = "- {}".format(self._text)
+        text_wrapped = textwrap.fill(text_as_list_item,
+                                     width=80,
+                                     subsequent_indent='  ',
+                                     break_long_words=False)
+        return("{text}\n  ({username} at {creation_date}, <{url}>)".format(
+            text=text_wrapped,
             username=self._username,
             creation_date=self._creation_date,
             url=self._url))

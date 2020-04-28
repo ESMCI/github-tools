@@ -80,23 +80,23 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
 
 ```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -t
-- Do a task suggested in the body (billsacks at 2020-04-23 19:24:00-06:00,
-  <https://github.com/ESMCI/github-tools/pull/1>)
+- Do a task suggested in the body
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
-- Do a task from the body's second checklist (billsacks at 2020-04-23
-  19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+- Do a task from the body's second checklist
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
-- Please change "just" to "only" (billsacks at 2020-04-23 19:25:28-06:00,
-  <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+- Please change "just" to "only"
+  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 
-- Please change "PR" to "Pull Request" (billsacks at 2020-04-23 19:25:28-06:00,
-  <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+- Please change "PR" to "Pull Request"
+  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 
-- Add a section on Demo deletions (billsacks at 2020-04-23 19:25:49-06:00,
-  <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
+- Add a section on Demo deletions
+  (billsacks at 2020-04-23 19:25:49-06:00, <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
 
-- I should do that (billsacks at 2020-04-23 19:26:39-06:00,
-  <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
+- I should do that
+  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
 
 ```
 
