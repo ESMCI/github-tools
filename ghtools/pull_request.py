@@ -76,7 +76,7 @@ class PullRequest:
                                   body=textwrap.indent(self._body, indent_level*" ")))
 
         for comment in self._comments:
-            my_str += "\n\n" + textwrap.indent(str(comment), indent_level*" ")
+            my_str += "\n\n" + str(comment)
 
         return my_str
 
