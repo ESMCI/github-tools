@@ -2,7 +2,7 @@
 
 ## Overview and quick start
 
-This `test` directory contains tests of the code in this repository,
+This `tests` directory contains tests of the code in this repository,
 along with a Makefile to facilitate running these tests. Tests should be
 run by running `make` from this directory with an appropriate target.
 

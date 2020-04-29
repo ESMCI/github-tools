@@ -130,5 +130,5 @@ how to do this are given in the wiki.
 
 ## Testing the code
 
-If you make changes the code, you should run the tests in the `test`
+If you make changes the code, you should run the tests in the `tests`
 subdirectory. See the README file in that directory for details.
