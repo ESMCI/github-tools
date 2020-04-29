@@ -49,12 +49,12 @@ def _commandline_args():
     description = """
 Tool for querying GitHub Pull Requests
 
-To show all comments in a pull request:
-    gh-pr-query -r REPO -p PR_NUMBER -s
-
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
     gh-pr-query -r REPO -p PR_NUMBER -t
+
+To show all comments in a pull request:
+    gh-pr-query -r REPO -p PR_NUMBER -s
 
 Example:
     gh-pr-query -r ESMCI/github-tools -p 1 -t
