@@ -3,6 +3,7 @@
 
 import textwrap
 from ghtools.comment import Comment, CommentType
+from ghtools.utils import fill_multiparagraph
 
 class PullRequest:
     """Class for holding information about a GitHub Pull Request"""
@@ -67,13 +68,14 @@ class PullRequest:
     def __str__(self):
         indent_level = 4
 
+        body_filled = fill_multiparagraph(self._body, 76)
         my_str = ("PR #{pr_number}: '{title}' by {username} on {creation_date} ({url}):\n"
                   "{body}".format(pr_number=self._pr_number,
                                   title=self._title,
                                   username=self._username,
                                   creation_date=self._creation_date,
                                   url=self._url,
-                                  body=textwrap.indent(self._body, indent_level*" ")))
+                                  body=textwrap.indent(body_filled, indent_level*" ")))
 
         for comment in self._comments:
             my_str += "\n\n" + str(comment)
