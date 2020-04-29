@@ -12,7 +12,7 @@ else
 endif
 
 # common args for running tests
-TEST_ARGS=-m unittest discover --start-directory ../..
+TEST_ARGS=-m unittest discover --start-directory ..
 
 ifeq ($(debug), not-set)
     ifeq ($(verbose), not-set)
@@ -43,7 +43,7 @@ stest: FORCE
 
 .PHONY: lint
 lint: FORCE
-	$(PYLINT) $(PYLINT_ARGS) ../
+	$(PYLINT) $(PYLINT_ARGS) *.py ../ghtools
 
 FORCE:
 
