@@ -118,3 +118,8 @@ when setting up your access token.
 
 You should protect this access token as you would a password. Tips for
 how to do this are given in the wiki.
+
+## Testing the code
+
+If you make changes the code, you should run the tests in the `test`
+subdirectory. See the README file in that directory for details.
