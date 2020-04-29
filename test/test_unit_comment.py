@@ -68,7 +68,7 @@ with a task"""
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 1)
-        self.assertEqual("My task", todos[0].get_text())
+        self.assertEqual(todos[0].get_text(), "My task")
 
     def test_getTodos_oneSingleLine(self):
         """Test the get_todos method when there is one todo in a single-line comment"""
@@ -76,7 +76,7 @@ with a task"""
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 1)
-        self.assertEqual("This is a task", todos[0].get_text())
+        self.assertEqual(todos[0].get_text(), "This is a task")
 
     def test_getTodos_multiple(self):
         """Test the get_todos method when there are multiple todos"""
@@ -93,9 +93,9 @@ More text
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 3)
-        self.assertEqual("Task 1", todos[0].get_text())
-        self.assertEqual("Task 2", todos[1].get_text())
-        self.assertEqual("Task 3", todos[2].get_text())
+        self.assertEqual(todos[0].get_text(), "Task 1")
+        self.assertEqual(todos[1].get_text(), "Task 2")
+        self.assertEqual(todos[2].get_text(), "Task 3")
 
 if __name__ == '__main__':
     unittest.main()

@@ -162,11 +162,11 @@ Or here."""
                              creation_date=datetime.datetime(2020, 1, 1))
         todos = pr.get_todos()
         self.assertEqual(len(todos), 5)
-        self.assertEqual("body task 1", todos[0].get_text())
-        self.assertEqual("body task 2", todos[1].get_text())
-        self.assertEqual("c1 task 1", todos[2].get_text())
-        self.assertEqual("c2 task 1", todos[3].get_text())
-        self.assertEqual("c2 task 2", todos[4].get_text())
+        self.assertEqual(todos[0].get_text(), "body task 1")
+        self.assertEqual(todos[1].get_text(), "body task 2")
+        self.assertEqual(todos[2].get_text(), "c1 task 1")
+        self.assertEqual(todos[3].get_text(), "c2 task 1")
+        self.assertEqual(todos[4].get_text(), "c2 task 2")
 
     def test_getTodos_sorted(self):
         """Make sure that the todos returned by get_todos are sorted properly"""
@@ -193,9 +193,9 @@ Or here."""
                              creation_date=datetime.datetime(2020, 1, 1))
         todos = pr.get_todos()
         self.assertEqual(len(todos), 6)
-        self.assertEqual("body-required", todos[0].get_text())
-        self.assertEqual("c1-required", todos[1].get_text())
-        self.assertEqual("c2-required", todos[2].get_text())
+        self.assertEqual(todos[0].get_text(), "body-required")
+        self.assertEqual(todos[1].get_text(), "c1-required")
+        self.assertEqual(todos[2].get_text(), "c2-required")
         self.assertIn("body-optional", todos[3].get_text())
         self.assertIn("c1-optional", todos[4].get_text())
         self.assertIn("c2-optional", todos[5].get_text())
@@ -211,8 +211,8 @@ Or here."""
                              username="user1", creation_date=datetime.datetime(2020, 1, 1))
         todos = pr.get_todos(filter_username="user1")
         self.assertEqual(len(todos), 2)
-        self.assertEqual("body task", todos[0].get_text())
-        self.assertEqual("c2 task", todos[1].get_text())
+        self.assertEqual(todos[0].get_text(), "body task")
+        self.assertEqual(todos[1].get_text(), "c2 task")
 
 if __name__ == '__main__':
     unittest.main()
