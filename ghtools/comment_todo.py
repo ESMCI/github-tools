@@ -69,6 +69,9 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 _TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
+_OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))"
+_OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
+
 # ------------------------------------------------------------------------
 # Functions
 # ------------------------------------------------------------------------
@@ -108,11 +111,26 @@ class CommentTodo:
         self._username = username
         self._creation_date = creation_date
         self._url = url
-        self._text = text
+        self._text, self._is_optional = self._normalize_optional_prefix(text)
 
     def get_text(self):
         """Return the text of this todo"""
         return self._text
+
+    def is_optional(self):
+        """Returns true if this is an optional todo"""
+        return self._is_optional
+
+    @staticmethod
+    def _normalize_optional_prefix(text):
+        """Determines if text has a prefix denoting optional; if so, normalizes it
+
+        Returns a tuple: (normalized_text, is_optional)
+        """
+        normalized_text, num_replacements = _OPTIONAL_RE.subn("[OPTIONAL]", text, count=1)
+        is_optional = (num_replacements > 0)
+
+        return normalized_text, is_optional
 
     def __repr__(self):
         return(type(self).__name__ +

@@ -192,12 +192,17 @@ class TestCommentTodo(unittest.TestCase):
     """Tests of CommentTodo class"""
 
     @staticmethod
-    def _create_comment_todo():
-        """Returns a basic CommentTodo object"""
+    def _create_comment_todo(text=None):
+        """Returns a basic CommentTodo object
+
+        If text is None, some default text will be used
+        """
+        if text is None:
+            text = "My text"
         return CommentTodo(username="me",
                            creation_date=datetime.datetime(2020, 1, 1),
                            url="https://github.com/org/repo/1#issuecomment-2",
-                           text="My text")
+                           text=text)
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a CommentTodo object should result in an equivalent object"""
@@ -212,6 +217,45 @@ class TestCommentTodo(unittest.TestCase):
         """Just make sure that the str method runs successfully"""
         t = self._create_comment_todo()
         _ = str(t)
+
+    def test_isOptional_nonOptional(self):
+        """Test is_optional method on a non-optional todo"""
+        # Only considered optional if it *starts* with the tag
+        text = "Not [optional] even though that tag appears somewhere"
+        t = self._create_comment_todo(text=text)
+        self.assertFalse(t.is_optional())
+        self.assertEqual(t.get_text(), text)
+
+    def test_isOptional_optional1(self):
+        """Test is_optional method on an optional todo"""
+        t = self._create_comment_todo(text="[optional] Not necessary")
+        self.assertTrue(t.is_optional())
+        self.assertEqual(t.get_text(), "[OPTIONAL] Not necessary")
+
+    def test_isOptional_optional2(self):
+        """Test is_optional method on an optional todo"""
+        t = self._create_comment_todo(text="(OPTIONAL) Not necessary")
+        self.assertTrue(t.is_optional())
+        self.assertEqual(t.get_text(), "[OPTIONAL] Not necessary")
+
+    def test_isOptional_optional3(self):
+        """Test is_optional method on an optional todo"""
+        t = self._create_comment_todo(text="Optional: Not necessary")
+        self.assertTrue(t.is_optional())
+        self.assertEqual(t.get_text(), "[OPTIONAL] Not necessary")
+
+    def test_isOptional_optionalWithLeadingSpace(self):
+        """Test is_optional method on an optional todo with leading spaces"""
+        t = self._create_comment_todo(text="   [optional] Not necessary")
+        self.assertTrue(t.is_optional())
+        self.assertEqual(t.get_text(), "[OPTIONAL] Not necessary")
+
+    def test_isOptional_twoOptionals(self):
+        """Test is_optional method on a todo with two occurrences of [optional]"""
+        # Only the first should be replaced
+        t = self._create_comment_todo(text="[optional] Not [optional] necessary")
+        self.assertTrue(t.is_optional())
+        self.assertEqual(t.get_text(), "[OPTIONAL] Not [optional] necessary")
 
 if __name__ == '__main__':
     unittest.main()
