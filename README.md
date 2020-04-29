@@ -38,6 +38,10 @@ before optional todos. (Optional todos are denoted by starting a todo
 item with '[optional]', '(optional)', or 'optional:', lowercase or
 uppercase.)
 
+For either usage, output can be filtered on username - only showing
+comments made by the given username - with the `-u` or
+`--filter-username` option.
+
 For more detailed help, run
 
     gh-pr-query -h
