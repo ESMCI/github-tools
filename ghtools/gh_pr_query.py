@@ -14,9 +14,11 @@ def main():
                 pr_number=args.pr_number,
                 show=args.show,
                 todo=args.todo,
-                access_token=args.access_token)
+                access_token=args.access_token,
+                filter_username=args.filter_username)
 
-def gh_pr_query(repo, pr_number, show, todo, access_token=None):
+def gh_pr_query(repo, pr_number, show, todo,
+                access_token=None, filter_username=None):
     """Implementation of the gh-pr-query command
 
     Args:
@@ -24,19 +26,27 @@ def gh_pr_query(repo, pr_number, show, todo, access_token=None):
     pr_number: integer - Pull Request number
     show: boolean - Whether to print all comments from this PR
     todo: boolean - Whether to print all outstanding todo items in this PR
-    access_token: string - A GitHub personal access token
+    access_token: string or None - A GitHub personal access token
+    filter_username: string or None - A GitHub user name; if provided, will only show
+        comments authored by this user
     """
     pull_request = fetch_pull_request(repo=repo,
                                       pr_number=pr_number,
                                       access_token=access_token)
     if show:
-        print(pull_request)
+        print(pull_request.get_content(filter_username=filter_username))
     if todo:
-        print_pr_todos(pull_request)
+        print_pr_todos(pull_request, filter_username=filter_username)
 
-def print_pr_todos(pull_request):
-    """Print all outstanding todo items for the given PullRequest"""
-    for todo in pull_request.get_todos():
+def print_pr_todos(pull_request, filter_username=None):
+    """Print all outstanding todo items for the given PullRequest
+
+    Args:
+    pull_request: PullRequest object
+    filter_username: string or None - A GitHub user name; if provided, will only show
+        comments authored by this user
+    """
+    for todo in pull_request.get_todos(filter_username=filter_username):
         print(str(todo) + "\n")
 
 # ========================================================================
@@ -88,6 +98,9 @@ Example:
                         'the number of queries that can be run in a period of time.\n'
                         'For more information, see:\n'
                         'https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line') # pylint: disable=line-too-long
+
+    parser.add_argument('-u', '--filter-username',
+                        help='Only show comments made by the given user')
 
     args = parser.parse_args()
     return args

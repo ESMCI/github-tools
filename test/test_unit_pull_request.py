@@ -16,31 +16,36 @@ class TestPullRequest(unittest.TestCase):
     """Tests of PullRequest class"""
 
     @staticmethod
-    def _simple_comment(comment_type, comment_id, content, creation_date=None):
+    def _simple_comment(comment_type, comment_id, content, username=None, creation_date=None):
         """Return a Comment object with some hard-coded pieces
 
         Args:
         comment_type (one of the options in CommentType (e.g., CommentType.CONVERSATION_COMMENT))
         comment_id (integer): used in URL
         content (string)
+        username (string): if not given, uses a hard-coded username
         creation_date (datetime): if not given, uses a hard-coded creation_date
         """
+        if username is None:
+            username = "you"
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 2)
         return Comment(comment_type=comment_type,
-                       username="you",
+                       username=username,
                        creation_date=creation_date,
                        url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
                        content=content)
 
     @staticmethod
-    def _create_pr(body=None, comments=None, creation_date=None):
+    def _create_pr(body=None, comments=None, username=None, creation_date=None):
         """Returns a basic PullRequest object
 
         If body is given, it should be a string; otherwise, a hard-coded body is used
 
         If comments is given, it should be a list of CommentType objects; otherwise, a
         hard-coded list of comments is used.
+
+        If username is given, it should be a string; otherwise, a hard-coded username is used
 
         If creation_date is given, it should be a datetime object; otherwise, a hard-coded
         creation_date is used.
@@ -56,12 +61,15 @@ class TestPullRequest(unittest.TestCase):
                         TestPullRequest._simple_comment(
                             CommentType.PR_REVIEW_COMMENT, 3, "review comment"))
 
+        if username is None:
+            username = "me"
+
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 1)
 
         return PullRequest(pr_number=17,
                            title="My title",
-                           username="me",
+                           username=username,
                            creation_date=creation_date,
                            url="https://github.com/org/repo/1",
                            body=body,
@@ -98,6 +106,20 @@ class TestPullRequest(unittest.TestCase):
         # In the following, note that we ignore the first comment, since that's the PR body
         #pylint: disable=protected-access
         self.assertEqual(pr._comments[1:], [c1, c3, c2, c5, c4])
+
+    def test_getContent_filterUsername(self):
+        """Test the get_content method with username filtering"""
+
+        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "TEST_COMMENT1",
+                                  username="user2")
+        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "TEST_COMMENT2",
+                                  username="user1")
+        pr = self._create_pr(body="TEST_PRBODY", comments=(c1, c2),
+                             username="user1")
+        content = pr.get_content(filter_username="user1")
+        self.assertIn("TEST_PRBODY", content)
+        self.assertIn("TEST_COMMENT2", content)
+        self.assertNotIn("TEST_COMMENT1", content)
 
     def test_getTodos_noComments(self):
         """Test the get_todos method when there are no comments"""
@@ -177,6 +199,20 @@ Or here."""
         self.assertIn("body-optional", todos[3].get_text())
         self.assertIn("c1-optional", todos[4].get_text())
         self.assertIn("c2-optional", todos[5].get_text())
+
+    def test_getTodos_filterUsername(self):
+        """Test the get_todos method when a username is provided"""
+
+        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "- [ ] c1 task",
+                                  username="user2", creation_date=datetime.datetime(2020, 1, 2))
+        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 2, "- [ ] c2 task",
+                                  username="user1", creation_date=datetime.datetime(2020, 1, 3))
+        pr = self._create_pr(body="- [ ] body task", comments=(c1, c2),
+                             username="user1", creation_date=datetime.datetime(2020, 1, 1))
+        todos = pr.get_todos(filter_username="user1")
+        self.assertEqual(len(todos), 2)
+        self.assertEqual("body task", todos[0].get_text())
+        self.assertEqual("c2 task", todos[1].get_text())
 
 if __name__ == '__main__':
     unittest.main()

@@ -33,6 +33,10 @@ class Comment:
         self._url = url
         self._content = content
 
+    def get_username(self):
+        """Return the username that authored this comment"""
+        return self._username
+
     def get_creation_date(self):
         """Return the creation date of this comment"""
         return self._creation_date
