@@ -11,8 +11,12 @@ else
     PYTHON=python
 endif
 
+# we need the python path to point one level up to access the package
+# and executables
+PYPATH=PYTHONPATH=..:
+
 # common args for running tests
-TEST_ARGS=-m unittest discover --start-directory ..
+TEST_ARGS=-m unittest discover
 
 ifeq ($(debug), not-set)
     ifeq ($(verbose), not-set)
@@ -35,11 +39,11 @@ test: utest stest
 
 .PHONY: utest
 utest: FORCE
-	$(PYTHON) $(TEST_ARGS) --pattern 'test_unit_*.py'
+	$(PYPATH) $(PYTHON) $(TEST_ARGS) --pattern 'test_unit_*.py'
 
 .PHONY: stest
 stest: FORCE
-	$(PYTHON) $(TEST_ARGS) --pattern 'test_sys_*.py'
+	$(PYPATH) $(PYTHON) $(TEST_ARGS) --pattern 'test_sys_*.py'
 
 .PHONY: lint
 lint: FORCE
