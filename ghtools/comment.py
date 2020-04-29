@@ -9,6 +9,7 @@ from ghtools.constants import LINE_WIDTH, INDENT_LEVEL
 
 class CommentType(Enum):
     """Valid types for the comment_type argument to the Comment constructor"""
+    PR_BODY_COMMENT = auto()
     CONVERSATION_COMMENT = auto()
     PR_LINE_COMMENT = auto()
     PR_REVIEW_COMMENT = auto()
@@ -67,7 +68,8 @@ class Comment:
                                            content=repr(self._content)))
 
     def __str__(self):
-        type_as_str = {CommentType.CONVERSATION_COMMENT: "Conversation comment",
+        type_as_str = {CommentType.PR_BODY_COMMENT: "PR body",
+                       CommentType.CONVERSATION_COMMENT: "Conversation comment",
                        CommentType.PR_LINE_COMMENT: "PR line comment",
                        CommentType.PR_REVIEW_COMMENT: "PR review comment"}
         content_filled = fill_multiparagraph(self._content, LINE_WIDTH-INDENT_LEVEL)

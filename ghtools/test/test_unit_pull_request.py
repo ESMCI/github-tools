@@ -95,8 +95,9 @@ class TestPullRequest(unittest.TestCase):
                                   creation_date=datetime.datetime(2020, 1, 4))
 
         pr = self._create_pr(comments=(c1, c2, c3, c4, c5))
+        # In the following, note that we ignore the first comment, since that's the PR body
         #pylint: disable=protected-access
-        self.assertEqual(pr._comments, [c1, c3, c2, c5, c4])
+        self.assertEqual(pr._comments[1:], [c1, c3, c2, c5, c4])
 
     def test_getTodos_noComments(self):
         """Test the get_todos method when there are no comments"""
