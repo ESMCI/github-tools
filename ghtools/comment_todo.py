@@ -113,6 +113,10 @@ class CommentTodo:
         self._url = url
         self._text, self._is_optional = self._normalize_optional_prefix(text)
 
+    def get_creation_date(self):
+        """Return the creation date of this todo"""
+        return self._creation_date
+
     def get_text(self):
         """Return the text of this todo"""
         return self._text

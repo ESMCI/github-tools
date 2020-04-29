@@ -33,12 +33,15 @@ class PullRequest:
     def get_todos(self):
         """Return a list of all lines in the PR body and all comments that represent todos
 
-        Returns a list of CommentTodo objects
+        Returns a list of CommentTodo objects; all required todos come first, followed by
+        optional todos; within each category (required and optional), they are sorted by
+        date.
         """
         todos = []
         todos.extend(self._body_as_comment().get_todos())
         for one_comment in self._comments:
             todos.extend(one_comment.get_todos())
+        todos.sort(key=lambda x: (x.is_optional(), x.get_creation_date()))
         return todos
 
     def _body_as_comment(self):
