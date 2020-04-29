@@ -33,6 +33,11 @@ To show all comments in a pull request:
 
     gh-pr-query -r REPO -p PR_NUMBER -s
 
+Output is sorted by date; for todos, all required todos are listed
+before optional todos. (Optional todos are denoted by starting a todo
+item with '[optional]', '(optional)', or 'optional:', lowercase or
+uppercase.)
+
 For more detailed help, run
 
     gh-pr-query -h

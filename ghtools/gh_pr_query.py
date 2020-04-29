@@ -56,6 +56,10 @@ To show all of the outstanding todo items in all comments in a pull request
 To show all comments in a pull request:
     gh-pr-query -r REPO -p PR_NUMBER -s
 
+Output is sorted by date; for todos, all required todos are listed before optional
+todos. (Optional todos are denoted by starting a todo item with '[optional]',
+'(optional)', or 'optional:', lowercase or uppercase.)
+
 Example:
     gh-pr-query -r ESMCI/github-tools -p 1 -t
 """
