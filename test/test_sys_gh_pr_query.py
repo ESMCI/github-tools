@@ -2,7 +2,7 @@
 
 """System tests for gh_pr_query
 
-Recommendation: Define an environment variable named GitHubToken containing your GitHub
+Recommendation: Define an environment variable named GITHUB_TOKEN containing your GitHub
 personal access token so that the tests here can use this token, and thus be less likely
 to fail due to GitHub's API rate limiting.
 """
@@ -27,7 +27,7 @@ class TestSysGhPrQuery(unittest.TestCase):
 
         If found, return it; otherwise, return None
         """
-        access_token = os.environ.get('GitHubToken')
+        access_token = os.environ.get('GITHUB_TOKEN')
         return access_token
 
     def test_ghPrQuery(self):
