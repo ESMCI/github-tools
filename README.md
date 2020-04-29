@@ -43,14 +43,8 @@ For more detailed help, run
 
 ```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -t
-- Do a task suggested in the body
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
-
 - Do a task from the body's second checklist
   (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
-
-- Please change "just" to "only"
-  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 
 - Please change "PR" to "Pull Request"
   (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
@@ -61,6 +55,11 @@ $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 - I should do that
   (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
 
+- [OPTIONAL] Do a task suggested in the body
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+
+- [OPTIONAL] Please change "just" to "only"
+  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 ```
 
 ##### Showing all comments
@@ -68,11 +67,13 @@ $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 ```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -s
 PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
+
+PR body by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
     This PR is for demonstration purposes only.
 
     There is a checklist in the body:
 
-    - [ ] Do a task suggested in the body
+    - [ ] (optional) Do a task suggested in the body
     - [x] Do another task suggested in the body
 
     After some more text, there is another checklist:
@@ -82,7 +83,7 @@ PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:
 PR line comment by billsacks on 2020-04-23 19:25:28-06:00 (https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434):
     I would like the following changes to this line:
 
-    - [ ] Please change "just" to "only"
+    - [ ] (optional) Please change "just" to "only"
     - [ ] Please change "PR" to "Pull Request"
 
 PR review comment by billsacks on 2020-04-23 19:25:49-06:00 (https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911):
