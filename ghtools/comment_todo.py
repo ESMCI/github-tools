@@ -3,6 +3,7 @@
 
 import re
 import textwrap
+from ghtools.constants import LINE_WIDTH
 
 # ------------------------------------------------------------------------
 # Regular expressions
@@ -126,7 +127,7 @@ class CommentTodo:
     def __str__(self):
         text_as_list_item = "- {}".format(self._text)
         text_wrapped = textwrap.fill(text_as_list_item,
-                                     width=80,
+                                     width=LINE_WIDTH,
                                      subsequent_indent='  ',
                                      break_long_words=False)
         return("{text}\n  ({username} at {creation_date}, <{url}>)".format(
