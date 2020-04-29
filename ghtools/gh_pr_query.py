@@ -16,7 +16,7 @@ def main():
                 todo=args.todo,
                 access_token=args.access_token)
 
-def gh_pr_query(repo, pr_number, todo, show, access_token=None):
+def gh_pr_query(repo, pr_number, show, todo, access_token=None):
     """Implementation of the gh-pr-query command
 
     Args:
