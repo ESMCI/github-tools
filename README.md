@@ -7,16 +7,13 @@ the command line. For now there is just one (`gh-pr-query`).
 
 ## Installation
 
-First install the dependency, `PyGithub`:
+This script and its necessary dependencies can be installed similarly to
+other python tools, using `pip install`. It is not yet on PyPI, but it
+can be installed directly from this GitHub repository with:
 
 ```
-pip install PyGithub
+pip install git+https://github.com/ESMCI/github-tools.git@master
 ```
-
-Then clone this repository and make sure that the top-level script,
-`gh-pr-query` is in your path - either by adding the clone directory to
-your path or by making a symbolic link somewhere that is already in your
-path.
 
 ## Tools contained here
 
