@@ -47,6 +47,8 @@ For more detailed help, run
 
 ##### Showing all outstanding todo items
 
+This shows all outstanding todo items in [this pull request](https://github.com/ESMCI/github-tools/pull/1):
+
 ```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 - Do a task from the body's second checklist
@@ -69,6 +71,8 @@ $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 ```
 
 ##### Showing all comments
+
+This shows all comments made in [this pull request](https://github.com/ESMCI/github-tools/pull/1):
 
 ```
 $ ./gh-pr-query -r esmci/github-tools -p 1 -s
