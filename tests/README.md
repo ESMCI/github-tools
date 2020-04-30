@@ -30,11 +30,11 @@ above:
 ## Notes about running system tests
 
 The system tests exercise the GitHub API. The GitHub API has fairly
-restrictive rate limiting if you don't provide authentication. The
-system tests are set up to use authentication if you have set the
-environment variable `GITHUB_TOKEN`. So, if you plan to run the system
-tests, it is best to define that environment variable, setting its value
-to your GitHub Personal Access Token.
+restrictive rate limiting if you don't provide authentication. As with
+interactive use of the tools, the system tests will use authentication
+if you have set the environment variable `GITHUB_TOKEN`. So, if you plan
+to run the system tests, it is best to define that environment variable,
+setting its value to your GitHub Personal Access Token.
 
 Note that the system tests can be somewhat fragile - e.g., they will
 fail without an internet connection, if the GitHub API is down, etc.
@@ -51,7 +51,7 @@ Finally, for the system tests, I think it's safe to ignore a warning
 that looks like this (which appears if a system test fails):
 
 ```
-/Users/sacks/bin_external/github-tools/ghtools/gh_pr_query.py:31: ResourceWarning: unclosed <ssl.SSLSocket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('192.168.0.10', 52118), raddr=('140.82.114.5', 443)>
-  access_token=access_token)
+/Users/sacks/bin_external/github-tools/ghtools/gh_pr_query.py:32: ResourceWarning: unclosed <ssl.SSLSocket fd=6, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=0, laddr=('192.168.0.10', 64665), raddr=('140.82.113.6', 443)>
+  pr_number=pr_number)
 ResourceWarning: Enable tracemalloc to get the object allocation traceback
 ```

@@ -14,11 +14,10 @@ def main():
                 pr_number=args.pr_number,
                 show=args.show,
                 todo=args.todo,
-                access_token=args.access_token,
                 filter_username=args.filter_username)
 
 def gh_pr_query(repo, pr_number, show, todo,
-                access_token=None, filter_username=None):
+                filter_username=None):
     """Implementation of the gh-pr-query command
 
     Args:
@@ -26,13 +25,11 @@ def gh_pr_query(repo, pr_number, show, todo,
     pr_number: integer - Pull Request number
     show: boolean - Whether to print all comments from this PR
     todo: boolean - Whether to print all outstanding todo items in this PR
-    access_token: string or None - A GitHub personal access token
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
     """
     pull_request = fetch_pull_request(repo=repo,
-                                      pr_number=pr_number,
-                                      access_token=access_token)
+                                      pr_number=pr_number)
     if show:
         print(pull_request.get_content(filter_username=filter_username))
     if todo:
@@ -70,6 +67,10 @@ Output is sorted by date; for todos, all required todos are listed before option
 todos. (Optional todos are denoted by starting a todo item with '[optional]',
 '(optional)', or 'optional:', lowercase or uppercase.)
 
+If the environment variable GITHUB_TOKEN is set, it will be used as a personal access
+token for authentication. Otherwise, no authentication will be used. For details, see
+<https://github.com/ESMCI/github-tools#providing-a-personal-access-token>.
+
 Example:
     gh-pr-query -r ESMCI/github-tools -p 1 -t
 """
@@ -91,13 +92,6 @@ Example:
 
     mode.add_argument('-t', '--todo', action='store_true',
                       help='Print all outstanding todo items in this PR')
-
-    parser.add_argument('-a', '--access-token',
-                        help='GitHub personal access token (like a password)\n'
-                        'This is not required, but without it, GitHub severely limits\n'
-                        'the number of queries that can be run in a period of time.\n'
-                        'For more information, see:\n'
-                        'https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line') # pylint: disable=line-too-long
 
     parser.add_argument('-u', '--filter-username',
                         help='Only show comments made by the given user')

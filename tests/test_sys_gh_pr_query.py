@@ -8,7 +8,6 @@ to fail due to GitHub's API rate limiting.
 """
 
 import unittest
-import os
 import contextlib
 import io
 import re
@@ -21,18 +20,8 @@ from ghtools.gh_pr_query import gh_pr_query
 class TestSysGhPrQuery(unittest.TestCase):
     """System tests of gh_pr_query"""
 
-    @staticmethod
-    def _get_access_token():
-        """Try to get a GitHub personal access token from the environment
-
-        If found, return it; otherwise, return None
-        """
-        access_token = os.environ.get('GITHUB_TOKEN')
-        return access_token
-
     def test_ghPrQuery(self):
         """Basic system test of gh_pr_query"""
-        access_token = self._get_access_token()
         stdout_redirect = io.StringIO()
         with contextlib.redirect_stdout(stdout_redirect):
             # Normally we wouldn't specify both todo and show in a single run of this. We
@@ -40,8 +29,7 @@ class TestSysGhPrQuery(unittest.TestCase):
             gh_pr_query(repo="ESMCI/github-tools",
                         pr_number=1,
                         show=True,
-                        todo=True,
-                        access_token=access_token)
+                        todo=True)
         output = stdout_redirect.getvalue()
 
         # Note that this is the same as what's given in the example in the top-level

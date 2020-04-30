@@ -1,24 +1,18 @@
 """Functions for fetching information from GitHub using the GitHub API"""
 
+import os
 from github import Github
 from ghtools.comment import Comment, CommentType
 from ghtools.pull_request import PullRequest
 
-def fetch_pull_request(repo, pr_number, access_token=None):
+def fetch_pull_request(repo, pr_number):
     """Fetch information about the given Pull Request, returning a PullRequest object
 
     Args:
     repo: string - in the format Org/Repo
     pr_number: integer - PR ID in this repo
-    access_token: string or None - if specified, this should be a GitHub personal access token
-        This is not necessary for a public repository, but providing it allows for much
-        higher limits for GitHub API's rate limiting. As long as you're working with a
-        public repository, the token does not need any specific permissions - i.e., no
-        scopes/permissions need to be checked. See
-        https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
-        for more details.
     """
-    gh_inst = Github(login_or_token=access_token)
+    gh_inst = Github(login_or_token=_get_access_token())
     gh_repo = gh_inst.get_repo(repo)
     gh_pr = gh_repo.get_pull(pr_number)
 
@@ -59,3 +53,15 @@ def fetch_pull_request(repo, pr_number, access_token=None):
                        url=gh_pr.html_url,
                        body=gh_pr.body,
                        comments=comments)
+
+def _get_access_token():
+    """Get a GitHub personal access token from the environment, if one is set.
+
+    This is not necessary for a public repository, but providing it allows for much higher
+    limits for GitHub API's rate limiting. As long as you're working with a public
+    repository, the token does not need any specific permissions - i.e., no
+    scopes/permissions need to be checked. See
+    https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
+    for more details.
+    """
+    return os.environ.get("GITHUB_TOKEN")
