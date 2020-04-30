@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="esmci_github_tools",
+    name="esmci-github-tools",
     version="0.1",
     author="Bill Sacks",
     author_email="sacks@ucar.edu",
