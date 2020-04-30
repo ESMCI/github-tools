@@ -107,6 +107,13 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
     Closing this PR that was for demonstration purposes only.
 ```
 
+#### Recommended workflow
+
+See [the
+wiki](https://github.com/ESMCI/github-tools/wiki/Recommended-pull-request-workflow-with-gh-pr-query)
+for the recommended workflow in order to most effectively leverage this
+tool's `--todo` option.
+
 ## Providing a personal access token
 
 The tools here optionally allow you to set a GitHub personal access
