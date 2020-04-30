@@ -54,7 +54,7 @@ def _commandline_args():
     """Parse and return command-line arguments"""
 
     description = """
-Tool for querying GitHub Pull Requests
+Tool for querying GitHub pull requests
 
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
@@ -83,7 +83,7 @@ Example:
                         help='GitHub repository, in the form ORG/REPO')
 
     parser.add_argument('-p', '--pr-number', required=True, type=int,
-                        help='Pull Request number')
+                        help='Pull request number')
 
     mode = parser.add_mutually_exclusive_group(required=True)
 

@@ -19,7 +19,7 @@ pip install git+https://github.com/ESMCI/github-tools.git@master
 
 ### gh-pr-query
 
-Tool for querying GitHub Pull Requests
+Tool for querying GitHub pull requests
 
 To show all of the outstanding todo items in all comments in a pull request
 (i.e., all unchecked checkboxes):
