@@ -50,7 +50,7 @@ For more detailed help, run
 This shows all outstanding todo items in [this pull request](https://github.com/ESMCI/github-tools/pull/1):
 
 ```
-$ ./gh-pr-query -r esmci/github-tools -p 1 -t
+$ gh-pr-query -r esmci/github-tools -p 1 -t
 - Do a task from the body's second checklist
   (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
@@ -75,7 +75,7 @@ $ ./gh-pr-query -r esmci/github-tools -p 1 -t
 This shows all comments made in [this pull request](https://github.com/ESMCI/github-tools/pull/1):
 
 ```
-$ ./gh-pr-query -r esmci/github-tools -p 1 -s
+$ gh-pr-query -r esmci/github-tools -p 1 -s
 PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
 
 PR body by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
