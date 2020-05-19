@@ -110,7 +110,7 @@ class PRLineComment(Comment):
         self._path = path
 
     def _type_as_str(self):
-        return "PR line comment"
+        return "PR line comment ({})".format(self._path)
 
     def __repr__(self):
         return(type(self).__name__ +

@@ -49,7 +49,7 @@ PR body by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/gith
 
     - [ ] Do a task from the body's second checklist
 
-PR line comment by billsacks on 2020-04-23 19:25:28-06:00 (https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434):
+PR line comment (README.md) by billsacks on 2020-04-23 19:25:28-06:00 (https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434):
     I would like the following changes to this line:
 
     - [ ] (optional) Please change "just" to "only"
