@@ -37,6 +37,30 @@ class TestPullRequest(unittest.TestCase):
             content=content)
 
     @staticmethod
+    def _simple_line_comment(comment_id, content, username=None, creation_date=None, path=None):
+        """Return a PRLineComment object with some hard-coded pieces
+
+        Args:
+        comment_id (integer): used in URL
+        content (string)
+        username (string): if not given, uses a hard-coded username
+        creation_date (datetime): if not given, uses a hard-coded creation_date
+        path (string): if not given, uses a hard-coded path
+        """
+        if username is None:
+            username = "you"
+        if creation_date is None:
+            creation_date = datetime.datetime(2020, 1, 2)
+        if path is None:
+            path = "path/to/file.py"
+        return PRLineComment(
+            username=username,
+            creation_date=creation_date,
+            url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
+            content=content,
+            path=path)
+
+    @staticmethod
     def _create_pr(body=None, comments=None, username=None, creation_date=None):
         """Returns a basic PullRequest object
 
@@ -56,8 +80,8 @@ class TestPullRequest(unittest.TestCase):
         if comments is None:
             comments = (TestPullRequest._simple_comment(
                 ConversationComment, 1, "comment"),
-                        TestPullRequest._simple_comment(
-                            PRLineComment, 2, "line comment"),
+                        TestPullRequest._simple_line_comment(
+                            2, "line comment"),
                         TestPullRequest._simple_comment(
                             PRReviewComment, 3, "review comment"))
 
@@ -95,10 +119,10 @@ class TestPullRequest(unittest.TestCase):
                                   creation_date=datetime.datetime(2020, 1, 1))
         c2 = self._simple_comment(ConversationComment, 2, "another comment",
                                   creation_date=datetime.datetime(2020, 1, 3))
-        c3 = self._simple_comment(PRLineComment, 3, "line comment",
-                                  creation_date=datetime.datetime(2020, 1, 2))
-        c4 = self._simple_comment(PRLineComment, 4, "another line comment",
-                                  creation_date=datetime.datetime(2020, 1, 5))
+        c3 = self._simple_line_comment(3, "line comment",
+                                       creation_date=datetime.datetime(2020, 1, 2))
+        c4 = self._simple_line_comment(4, "another line comment",
+                                       creation_date=datetime.datetime(2020, 1, 5))
         c5 = self._simple_comment(PRReviewComment, 5, "review comment",
                                   creation_date=datetime.datetime(2020, 1, 4))
 

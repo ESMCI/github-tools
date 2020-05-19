@@ -28,7 +28,8 @@ def fetch_pull_request(repo, pr_number):
         this_comment = PRLineComment(username=gh_comment.user.login,
                                      creation_date=gh_comment.created_at.astimezone(),
                                      url=gh_comment.html_url,
-                                     content=gh_comment.body)
+                                     content=gh_comment.body,
+                                     path=gh_comment.path)
         comments.append(this_comment)
 
     for gh_comment in gh_pr.get_reviews():

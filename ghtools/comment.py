@@ -97,5 +97,29 @@ class PRReviewComment(Comment):
 
 class PRLineComment(Comment):
     """Class for holding a PR line comment"""
+    def __init__(self, username, creation_date, url, content, path):
+        """Initialize a PRLineComment object
+
+        Args: Same as for Comment base class except:
+        path: string - path to file that comment applies to
+        """
+        super().__init__(username=username,
+                         creation_date=creation_date,
+                         url=url,
+                         content=content)
+        self._path = path
+
     def _type_as_str(self):
         return "PR line comment"
+
+    def __repr__(self):
+        return(type(self).__name__ +
+               "(username={username}, "
+               "creation_date={creation_date}, "
+               "url={url}, "
+               "content={content}, "
+               "path={path})".format(username=repr(self._username),
+                                     creation_date=repr(self._creation_date),
+                                     url=repr(self._url),
+                                     content=repr(self._content),
+                                     path=repr(self._path)))
