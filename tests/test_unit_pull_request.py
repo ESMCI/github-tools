@@ -6,7 +6,7 @@
 import unittest
 import datetime
 from ghtools.pull_request import PullRequest
-from ghtools.comment import Comment, CommentType
+from ghtools.comment import ConversationComment, PRReviewComment, PRLineComment
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -20,7 +20,7 @@ class TestPullRequest(unittest.TestCase):
         """Return a Comment object with some hard-coded pieces
 
         Args:
-        comment_type (one of the options in CommentType (e.g., CommentType.CONVERSATION_COMMENT))
+        comment_type (one of the subclasses of Comment (e.g., ConversationComment))
         comment_id (integer): used in URL
         content (string)
         username (string): if not given, uses a hard-coded username
@@ -30,11 +30,11 @@ class TestPullRequest(unittest.TestCase):
             username = "you"
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 2)
-        return Comment(comment_type=comment_type,
-                       username=username,
-                       creation_date=creation_date,
-                       url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
-                       content=content)
+        return comment_type(
+            username=username,
+            creation_date=creation_date,
+            url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
+            content=content)
 
     @staticmethod
     def _create_pr(body=None, comments=None, username=None, creation_date=None):
@@ -42,7 +42,7 @@ class TestPullRequest(unittest.TestCase):
 
         If body is given, it should be a string; otherwise, a hard-coded body is used
 
-        If comments is given, it should be a list of CommentType objects; otherwise, a
+        If comments is given, it should be a list of Comment objects; otherwise, a
         hard-coded list of comments is used.
 
         If username is given, it should be a string; otherwise, a hard-coded username is used
@@ -55,11 +55,11 @@ class TestPullRequest(unittest.TestCase):
 
         if comments is None:
             comments = (TestPullRequest._simple_comment(
-                CommentType.CONVERSATION_COMMENT, 1, "comment"),
+                ConversationComment, 1, "comment"),
                         TestPullRequest._simple_comment(
-                            CommentType.PR_LINE_COMMENT, 2, "line comment"),
+                            PRLineComment, 2, "line comment"),
                         TestPullRequest._simple_comment(
-                            CommentType.PR_REVIEW_COMMENT, 3, "review comment"))
+                            PRReviewComment, 3, "review comment"))
 
         if username is None:
             username = "me"
@@ -91,15 +91,15 @@ class TestPullRequest(unittest.TestCase):
 
     def test_commentsAreSorted(self):
         """Comments should be sorted by date"""
-        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "comment",
+        c1 = self._simple_comment(ConversationComment, 1, "comment",
                                   creation_date=datetime.datetime(2020, 1, 1))
-        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 2, "another comment",
+        c2 = self._simple_comment(ConversationComment, 2, "another comment",
                                   creation_date=datetime.datetime(2020, 1, 3))
-        c3 = self._simple_comment(CommentType.PR_LINE_COMMENT, 3, "line comment",
+        c3 = self._simple_comment(PRLineComment, 3, "line comment",
                                   creation_date=datetime.datetime(2020, 1, 2))
-        c4 = self._simple_comment(CommentType.PR_LINE_COMMENT, 4, "another line comment",
+        c4 = self._simple_comment(PRLineComment, 4, "another line comment",
                                   creation_date=datetime.datetime(2020, 1, 5))
-        c5 = self._simple_comment(CommentType.PR_REVIEW_COMMENT, 5, "review comment",
+        c5 = self._simple_comment(PRReviewComment, 5, "review comment",
                                   creation_date=datetime.datetime(2020, 1, 4))
 
         pr = self._create_pr(comments=(c1, c2, c3, c4, c5))
@@ -110,9 +110,9 @@ class TestPullRequest(unittest.TestCase):
     def test_getContent_filterUsername(self):
         """Test the get_content method with username filtering"""
 
-        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "TEST_COMMENT1",
+        c1 = self._simple_comment(ConversationComment, 1, "TEST_COMMENT1",
                                   username="user2")
-        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "TEST_COMMENT2",
+        c2 = self._simple_comment(ConversationComment, 1, "TEST_COMMENT2",
                                   username="user1")
         pr = self._create_pr(body="TEST_PRBODY", comments=(c1, c2),
                              username="user1")
@@ -151,11 +151,11 @@ You won't find any tasks here.
 
 Or here."""
 
-        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, c1_content,
+        c1 = self._simple_comment(ConversationComment, 1, c1_content,
                                   creation_date=datetime.datetime(2020, 1, 2))
-        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 2, c2_content,
+        c2 = self._simple_comment(ConversationComment, 2, c2_content,
                                   creation_date=datetime.datetime(2020, 1, 3))
-        c3 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 3, c3_content,
+        c3 = self._simple_comment(ConversationComment, 3, c3_content,
                                   creation_date=datetime.datetime(2020, 1, 4))
 
         pr = self._create_pr(body=body, comments=(c1, c2, c3),
@@ -184,9 +184,9 @@ Or here."""
 
         # Note that c1 was created before c2, but we put c2 first in the list - to make
         # sure they get sorted properly.
-        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, c1_content,
+        c1 = self._simple_comment(ConversationComment, 1, c1_content,
                                   creation_date=datetime.datetime(2020, 1, 2))
-        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 2, c2_content,
+        c2 = self._simple_comment(ConversationComment, 2, c2_content,
                                   creation_date=datetime.datetime(2020, 1, 3))
 
         pr = self._create_pr(body=body, comments=(c2, c1),
@@ -203,9 +203,9 @@ Or here."""
     def test_getTodos_filterUsername(self):
         """Test the get_todos method when a username is provided"""
 
-        c1 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 1, "- [ ] c1 task",
+        c1 = self._simple_comment(ConversationComment, 1, "- [ ] c1 task",
                                   username="user2", creation_date=datetime.datetime(2020, 1, 2))
-        c2 = self._simple_comment(CommentType.CONVERSATION_COMMENT, 2, "- [ ] c2 task",
+        c2 = self._simple_comment(ConversationComment, 2, "- [ ] c2 task",
                                   username="user1", creation_date=datetime.datetime(2020, 1, 3))
         pr = self._create_pr(body="- [ ] body task", comments=(c1, c2),
                              username="user1", creation_date=datetime.datetime(2020, 1, 1))

@@ -2,32 +2,24 @@
 """
 
 import textwrap
-from enum import Enum, auto
 from ghtools.comment_todo import search_line_for_todo, CommentTodo
 from ghtools.utils import fill_multiparagraph
 from ghtools.constants import LINE_WIDTH, INDENT_LEVEL
 
-class CommentType(Enum):
-    """Valid types for the comment_type argument to the Comment constructor"""
-    PR_BODY_COMMENT = auto()
-    CONVERSATION_COMMENT = auto()
-    PR_LINE_COMMENT = auto()
-    PR_REVIEW_COMMENT = auto()
-
+# The Comment class should not be instantiated directly. Instead, one of its child classes
+# should be instantiated (see below for the child classes).
 class Comment:
     """Class for holding information about a single GitHub comment"""
 
-    def __init__(self, comment_type, username, creation_date, url, content):
+    def __init__(self, username, creation_date, url, content):
         """Initialize a comment object.
 
         Args:
-        comment_type: one of the options in CommentType (e.g., CommentType.CONVERSATION_COMMENT)
         username: string
         creation_date: datetime
         url: string
         content: string
         """
-        self._type = comment_type
         self._username = username
         self._creation_date = creation_date
         self._url = url
@@ -59,26 +51,25 @@ class Comment:
 
         return todos
 
+    # This method needs to be implemented by each derived class
+    def _type_as_str(self):
+        """Return the type of this comment as a string"""
+        raise NotImplementedError
+
     def __repr__(self):
         return(type(self).__name__ +
-               "(comment_type={comment_type}, "
-               "username={username}, "
+               "(username={username}, "
                "creation_date={creation_date}, "
                "url={url}, "
-               "content={content})".format(comment_type=str(self._type),
-                                           username=repr(self._username),
+               "content={content})".format(username=repr(self._username),
                                            creation_date=repr(self._creation_date),
                                            url=repr(self._url),
                                            content=repr(self._content)))
 
     def __str__(self):
-        type_as_str = {CommentType.PR_BODY_COMMENT: "PR body",
-                       CommentType.CONVERSATION_COMMENT: "Conversation comment",
-                       CommentType.PR_LINE_COMMENT: "PR line comment",
-                       CommentType.PR_REVIEW_COMMENT: "PR review comment"}
         content_filled = fill_multiparagraph(self._content, LINE_WIDTH-INDENT_LEVEL)
         return("{comment_type} by {username} on {creation_date} ({url}):\n"
-               "{content}".format(comment_type=type_as_str[self._type],
+               "{content}".format(comment_type=self._type_as_str(),
                                   username=self._username,
                                   creation_date=self._creation_date,
                                   url=self._url,
@@ -88,3 +79,23 @@ class Comment:
         if isinstance(other, Comment):
             return self.__dict__ == other.__dict__
         return NotImplemented
+
+class PRBodyComment(Comment):
+    """Class for holding a PR body comment"""
+    def _type_as_str(self):
+        return "PR body"
+
+class ConversationComment(Comment):
+    """Class for holding a conversation comment"""
+    def _type_as_str(self):
+        return "Conversation comment"
+
+class PRReviewComment(Comment):
+    """Class for holding a PR review comment"""
+    def _type_as_str(self):
+        return "PR review comment"
+
+class PRLineComment(Comment):
+    """Class for holding a PR line comment"""
+    def _type_as_str(self):
+        return "PR line comment"

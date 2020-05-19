@@ -5,7 +5,7 @@
 
 import unittest
 import datetime
-from ghtools.comment import Comment, CommentType
+from ghtools.comment import ConversationComment
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -22,11 +22,10 @@ class TestComment(unittest.TestCase):
         """
         if content is None:
             content = "My content"
-        return Comment(comment_type=CommentType.PR_LINE_COMMENT,
-                       username="me",
-                       creation_date=datetime.datetime(2020, 1, 1),
-                       url="https://github.com/org/repo/1#issuecomment-2",
-                       content=content)
+        return ConversationComment(username="me",
+                                   creation_date=datetime.datetime(2020, 1, 1),
+                                   url="https://github.com/org/repo/1#issuecomment-2",
+                                   content=content)
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a Comment object should result in an equivalent object"""

@@ -2,7 +2,7 @@
 
 import os
 from github import Github
-from ghtools.comment import Comment, CommentType
+from ghtools.comment import ConversationComment, PRReviewComment, PRLineComment
 from ghtools.pull_request import PullRequest
 
 def fetch_pull_request(repo, pr_number):
@@ -18,19 +18,17 @@ def fetch_pull_request(repo, pr_number):
 
     comments = []
     for gh_comment in gh_pr.get_issue_comments():
-        this_comment = Comment(comment_type=CommentType.CONVERSATION_COMMENT,
-                               username=gh_comment.user.login,
-                               creation_date=gh_comment.created_at.astimezone(),
-                               url=gh_comment.html_url,
-                               content=gh_comment.body)
+        this_comment = ConversationComment(username=gh_comment.user.login,
+                                           creation_date=gh_comment.created_at.astimezone(),
+                                           url=gh_comment.html_url,
+                                           content=gh_comment.body)
         comments.append(this_comment)
 
     for gh_comment in gh_pr.get_comments():
-        this_comment = Comment(comment_type=CommentType.PR_LINE_COMMENT,
-                               username=gh_comment.user.login,
-                               creation_date=gh_comment.created_at.astimezone(),
-                               url=gh_comment.html_url,
-                               content=gh_comment.body)
+        this_comment = PRLineComment(username=gh_comment.user.login,
+                                     creation_date=gh_comment.created_at.astimezone(),
+                                     url=gh_comment.html_url,
+                                     content=gh_comment.body)
         comments.append(this_comment)
 
     for gh_comment in gh_pr.get_reviews():
@@ -39,11 +37,10 @@ def fetch_pull_request(repo, pr_number):
             # made - even individual line comments made outside a review, or when you make
             # a set of line comments in a review but don't leave an overall
             # comment. Exclude empty reviews that are created in these circumstances.
-            this_comment = Comment(comment_type=CommentType.PR_REVIEW_COMMENT,
-                                   username=gh_comment.user.login,
-                                   creation_date=gh_comment.submitted_at.astimezone(),
-                                   url=gh_comment.html_url,
-                                   content=gh_comment.body)
+            this_comment = PRReviewComment(username=gh_comment.user.login,
+                                           creation_date=gh_comment.submitted_at.astimezone(),
+                                           url=gh_comment.html_url,
+                                           content=gh_comment.body)
             comments.append(this_comment)
 
     return PullRequest(pr_number=pr_number,
