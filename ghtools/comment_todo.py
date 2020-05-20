@@ -111,7 +111,7 @@ class CommentTodo:
         self._username = username
         self._creation_date = creation_date
         self._url = url
-        self._text, self._is_optional = self._normalize_optional_prefix(text)
+        self._text, self._is_optional = self._strip_optional_prefix(text)
 
     def get_creation_date(self):
         """Return the creation date of this todo"""
@@ -119,6 +119,8 @@ class CommentTodo:
 
     def get_text(self):
         """Return the text of this todo"""
+        if self.is_optional():
+            return "[OPTIONAL]" + self._text
         return self._text
 
     def is_optional(self):
@@ -126,15 +128,15 @@ class CommentTodo:
         return self._is_optional
 
     @staticmethod
-    def _normalize_optional_prefix(text):
-        """Determines if text has a prefix denoting optional; if so, normalizes it
+    def _strip_optional_prefix(text):
+        """Determines if text has a prefix denoting optional; if so, strips it
 
         Returns a tuple: (normalized_text, is_optional)
         """
-        normalized_text, num_replacements = _OPTIONAL_RE.subn("[OPTIONAL]", text, count=1)
+        stripped_text, num_replacements = _OPTIONAL_RE.subn("", text, count=1)
         is_optional = (num_replacements > 0)
 
-        return normalized_text, is_optional
+        return stripped_text, is_optional
 
     def __repr__(self):
         return(type(self).__name__ +
@@ -144,10 +146,10 @@ class CommentTodo:
                "text={text})".format(username=repr(self._username),
                                      creation_date=repr(self._creation_date),
                                      url=repr(self._url),
-                                     text=repr(self._text)))
+                                     text=repr(self.get_text())))
 
     def __str__(self):
-        text_as_list_item = "- {}".format(self._text)
+        text_as_list_item = "- {}".format(self.get_text())
         text_wrapped = textwrap.fill(text_as_list_item,
                                      width=LINE_WIDTH,
                                      subsequent_indent='  ',
