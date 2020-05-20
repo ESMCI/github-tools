@@ -192,7 +192,7 @@ class TestCommentTodo(unittest.TestCase):
     """Tests of CommentTodo class"""
 
     @staticmethod
-    def _create_comment_todo(text=None, extra_info=""):
+    def _create_comment_todo(text=None, extra_info=None):
         """Returns a basic CommentTodo object
 
         If text is None, some default text will be used
@@ -275,6 +275,26 @@ class TestCommentTodo(unittest.TestCase):
         t = self._create_comment_todo(text="[optional] Not [optional] necessary")
         self.assertTrue(t.is_optional())
         self.assertEqual(t.get_text(), "[OPTIONAL] Not [optional] necessary")
+
+    def test_getFullText_basic(self):
+        """Test get_full_text with a basic todo (non-optional, no extra info)"""
+        t = self._create_comment_todo(text="My text")
+        self.assertEqual(t.get_full_text(), "My text")
+
+    def test_getFullText_optional(self):
+        """Test get_full_text with an optional todo"""
+        t = self._create_comment_todo(text="[optional]  My text")
+        self.assertEqual(t.get_full_text(), "[OPTIONAL] My text")
+
+    def test_getFullText_extraInfo(self):
+        """Test get_full_text with a extra info"""
+        t = self._create_comment_todo(text="My text", extra_info="Extra stuff")
+        self.assertEqual(t.get_full_text(), "[Extra stuff] My text")
+
+    def test_getFullText_optionalAndExtraInfo(self):
+        """Test get_full_text with an optional todo that also has extra info"""
+        t = self._create_comment_todo(text="[optional]  My text", extra_info="Extra stuff")
+        self.assertEqual(t.get_full_text(), "[OPTIONAL] [Extra stuff] My text")
 
 if __name__ == '__main__':
     unittest.main()

@@ -97,7 +97,7 @@ def search_line_for_todo(line):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, creation_date, url, text, extra_info=""):
+    def __init__(self, username, creation_date, url, text, extra_info=None):
         """Initialize a CommentTodo object.
 
         Args:
@@ -121,10 +121,25 @@ class CommentTodo:
         return self._creation_date
 
     def get_text(self):
-        """Return the text of this todo"""
+        """Return the text of this todo
+
+        This includes a possible 'optional' prefix, but not any extra info
+        """
         if self.is_optional():
             return "[OPTIONAL] " + self._text
         return self._text
+
+    def get_full_text(self):
+        """Return the text of this todo
+
+        This includes a possible 'optional' prefix and also any extra info
+        """
+        prefix = ""
+        if self.is_optional():
+            prefix += "[OPTIONAL] "
+        if self._extra_info:
+            prefix += "[{extra_info}] ".format(extra_info=self._extra_info)
+        return prefix + self._text
 
     def is_optional(self):
         """Returns true if this is an optional todo"""
@@ -154,7 +169,7 @@ class CommentTodo:
                                                  extra_info=repr(self._extra_info)))
 
     def __str__(self):
-        text_as_list_item = "- {}".format(self.get_text())
+        text_as_list_item = "- {}".format(self.get_full_text())
         text_wrapped = textwrap.fill(text_as_list_item,
                                      width=LINE_WIDTH,
                                      subsequent_indent='  ',
