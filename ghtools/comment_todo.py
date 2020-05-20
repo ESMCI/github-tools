@@ -97,7 +97,7 @@ def search_line_for_todo(line):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, creation_date, url, text):
+    def __init__(self, username, creation_date, url, text, extra_info=""):
         """Initialize a CommentTodo object.
 
         Args:
@@ -107,11 +107,14 @@ class CommentTodo:
         text: string - this should be a single line, containing a single to do item,
            without the leading '- [ ]' or similar; typically, it will be the output from
            the search_line_for_todo function
+        extra_info: string - optional extra information to print in the output
+           This isn't included in 'text' because it gets inserted thoughtfully in the output
         """
         self._username = username
         self._creation_date = creation_date
         self._url = url
         self._text, self._is_optional = self._strip_optional_prefix(text)
+        self._extra_info = extra_info
 
     def get_creation_date(self):
         """Return the creation date of this todo"""
@@ -143,10 +146,12 @@ class CommentTodo:
                "(username={username}, "
                "creation_date={creation_date}, "
                "url={url}, "
-               "text={text})".format(username=repr(self._username),
-                                     creation_date=repr(self._creation_date),
-                                     url=repr(self._url),
-                                     text=repr(self.get_text())))
+               "text={text}, "
+               "extra_info={extra_info})".format(username=repr(self._username),
+                                                 creation_date=repr(self._creation_date),
+                                                 url=repr(self._url),
+                                                 text=repr(self.get_text()),
+                                                 extra_info=repr(self._extra_info)))
 
     def __str__(self):
         text_as_list_item = "- {}".format(self.get_text())

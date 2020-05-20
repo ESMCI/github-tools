@@ -192,7 +192,7 @@ class TestCommentTodo(unittest.TestCase):
     """Tests of CommentTodo class"""
 
     @staticmethod
-    def _create_comment_todo(text=None):
+    def _create_comment_todo(text=None, extra_info=""):
         """Returns a basic CommentTodo object
 
         If text is None, some default text will be used
@@ -202,7 +202,8 @@ class TestCommentTodo(unittest.TestCase):
         return CommentTodo(username="me",
                            creation_date=datetime.datetime(2020, 1, 1),
                            url="https://github.com/org/repo/1#issuecomment-2",
-                           text=text)
+                           text=text,
+                           extra_info=extra_info)
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a CommentTodo object should result in an equivalent object"""
@@ -218,6 +219,15 @@ class TestCommentTodo(unittest.TestCase):
         # This ability to recreate the object isn't a strict requirement, so if it gets
         # hard to maintain, we can drop it.
         t = self._create_comment_todo(text="[optional] Not necessary")
+        # pylint: disable=eval-used
+        t2 = eval(repr(t))
+        self.assertEqual(t2, t)
+
+    def test_repr_extraInfo_resultsInEqualObject(self):
+        """The repr of a CommentTodo object with extra info should result in equiv object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
+        t = self._create_comment_todo(extra_info="extra stuff")
         # pylint: disable=eval-used
         t2 = eval(repr(t))
         self.assertEqual(t2, t)
