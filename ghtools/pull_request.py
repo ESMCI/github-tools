@@ -1,7 +1,7 @@
 """Class for holding information about a GitHub Pull Request
 """
 
-from ghtools.comment import Comment, CommentType
+from ghtools.comment import PRBodyComment
 
 class PullRequest:
     """Class for holding information about a GitHub Pull Request"""
@@ -74,11 +74,10 @@ class PullRequest:
 
     def _body_as_comment(self):
         """Return a Comment object representing the body of this PullRequest"""
-        return Comment(comment_type=CommentType.PR_BODY_COMMENT,
-                       username=self._username,
-                       creation_date=self._creation_date,
-                       url=self._url,
-                       content=self._body)
+        return PRBodyComment(username=self._username,
+                             creation_date=self._creation_date,
+                             url=self._url,
+                             content=self._body)
 
     def __repr__(self):
         return(type(self).__name__ +

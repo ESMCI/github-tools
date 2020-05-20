@@ -5,7 +5,7 @@
 
 import unittest
 import datetime
-from ghtools.comment import Comment, CommentType
+from ghtools.comment import ConversationComment, PRLineComment
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -22,11 +22,10 @@ class TestComment(unittest.TestCase):
         """
         if content is None:
             content = "My content"
-        return Comment(comment_type=CommentType.PR_LINE_COMMENT,
-                       username="me",
-                       creation_date=datetime.datetime(2020, 1, 1),
-                       url="https://github.com/org/repo/1#issuecomment-2",
-                       content=content)
+        return ConversationComment(username="me",
+                                   creation_date=datetime.datetime(2020, 1, 1),
+                                   url="https://github.com/org/repo/1#issuecomment-2",
+                                   content=content)
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a Comment object should result in an equivalent object"""
@@ -68,7 +67,7 @@ with a task"""
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 1)
-        self.assertEqual(todos[0].get_text(), "My task")
+        self.assertEqual(todos[0].get_full_text(), "My task")
 
     def test_getTodos_oneSingleLine(self):
         """Test the get_todos method when there is one todo in a single-line comment"""
@@ -76,7 +75,7 @@ with a task"""
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 1)
-        self.assertEqual(todos[0].get_text(), "This is a task")
+        self.assertEqual(todos[0].get_full_text(), "This is a task")
 
     def test_getTodos_multiple(self):
         """Test the get_todos method when there are multiple todos"""
@@ -93,9 +92,48 @@ More text
         c = self._create_comment(content=content)
         todos = c.get_todos()
         self.assertEqual(len(todos), 3)
-        self.assertEqual(todos[0].get_text(), "Task 1")
-        self.assertEqual(todos[1].get_text(), "Task 2")
-        self.assertEqual(todos[2].get_text(), "Task 3")
+        self.assertEqual(todos[0].get_full_text(), "Task 1")
+        self.assertEqual(todos[1].get_full_text(), "Task 2")
+        self.assertEqual(todos[2].get_full_text(), "Task 3")
+
+# Extra tests of PRLineComment class, since this class has some unique behavior
+class TestPRLineComment(unittest.TestCase):
+    """Tests of PRLineComment class"""
+
+    @staticmethod
+    def _create_comment(content=None, path=None):
+        """Returns a basic PRLineComment object
+
+        If content isn't specified, use some hard-coded content
+
+        If path isn't specified, use some hard-coded path
+        """
+        if content is None:
+            content = "My content"
+        if path is None:
+            path = "path/to/file.py"
+        return PRLineComment(username="me",
+                             creation_date=datetime.datetime(2020, 1, 1),
+                             url="https://github.com/org/repo/1#issuecomment-2",
+                             content=content,
+                             path=path)
+
+    def test_repr_resultsInEqualObject(self):
+        """The repr of a Comment object should result in an equivalent object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
+        c = self._create_comment()
+        # pylint: disable=eval-used
+        c2 = eval(repr(c))
+        self.assertEqual(c2, c)
+
+    def test_getTodos_showsExtraInfo(self):
+        """For a PRLineComment, the todo text should contain extra info"""
+        content = "- [ ] This is a task"
+        path = "path/to/file.py"
+        c = self._create_comment(content=content, path=path)
+        todos = c.get_todos()
+        self.assertEqual(todos[0].get_full_text(), "{path/to/file.py} This is a task")
 
 if __name__ == '__main__':
     unittest.main()

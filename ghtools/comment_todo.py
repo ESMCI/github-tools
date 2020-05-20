@@ -69,7 +69,7 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 _TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
-_OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))"
+_OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))\s*"
 _OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
 
 # ------------------------------------------------------------------------
@@ -97,7 +97,7 @@ def search_line_for_todo(line):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, creation_date, url, text):
+    def __init__(self, username, creation_date, url, text, extra_info=None):
         """Initialize a CommentTodo object.
 
         Args:
@@ -107,47 +107,69 @@ class CommentTodo:
         text: string - this should be a single line, containing a single to do item,
            without the leading '- [ ]' or similar; typically, it will be the output from
            the search_line_for_todo function
+        extra_info: string - optional extra information to print in the output
+           This isn't included in 'text' because it gets inserted thoughtfully in the output
         """
         self._username = username
         self._creation_date = creation_date
         self._url = url
-        self._text, self._is_optional = self._normalize_optional_prefix(text)
+        self._text, self._is_optional = self._strip_optional_prefix(text)
+        self._extra_info = extra_info
 
     def get_creation_date(self):
         """Return the creation date of this todo"""
         return self._creation_date
 
-    def get_text(self):
-        """Return the text of this todo"""
+    def _get_text(self):
+        """Return the text of this todo
+
+        This includes a possible 'optional' prefix, but not any extra info
+        """
+        if self.is_optional():
+            return "[OPTIONAL] " + self._text
         return self._text
+
+    def get_full_text(self):
+        """Return the text of this todo
+
+        This includes a possible 'optional' prefix and also any extra info
+        """
+        prefix = ""
+        if self.is_optional():
+            prefix += "[OPTIONAL] "
+        if self._extra_info:
+            prefix += "{{{extra_info}}} ".format(extra_info=self._extra_info)
+        return prefix + self._text
 
     def is_optional(self):
         """Returns true if this is an optional todo"""
         return self._is_optional
 
     @staticmethod
-    def _normalize_optional_prefix(text):
-        """Determines if text has a prefix denoting optional; if so, normalizes it
+    def _strip_optional_prefix(text):
+        """Determines if text has a prefix denoting optional; if so, strips it
 
         Returns a tuple: (normalized_text, is_optional)
         """
-        normalized_text, num_replacements = _OPTIONAL_RE.subn("[OPTIONAL]", text, count=1)
+        stripped_text, num_replacements = _OPTIONAL_RE.subn("", text, count=1)
         is_optional = (num_replacements > 0)
 
-        return normalized_text, is_optional
+        return stripped_text, is_optional
 
     def __repr__(self):
         return(type(self).__name__ +
                "(username={username}, "
                "creation_date={creation_date}, "
                "url={url}, "
-               "text={text})".format(username=repr(self._username),
-                                     creation_date=repr(self._creation_date),
-                                     url=repr(self._url),
-                                     text=repr(self._text)))
+               "text={text}, "
+               "extra_info={extra_info})".format(username=repr(self._username),
+                                                 creation_date=repr(self._creation_date),
+                                                 url=repr(self._url),
+                                                 text=repr(self._get_text()),
+                                                 extra_info=repr(self._extra_info)))
 
     def __str__(self):
-        text_as_list_item = "- {}".format(self._text)
+        text_as_list_item = "- {}".format(self.get_full_text())
         text_wrapped = textwrap.fill(text_as_list_item,
                                      width=LINE_WIDTH,
                                      subsequent_indent='  ',
