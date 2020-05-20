@@ -47,7 +47,8 @@ class Comment:
                     username=self._username,
                     creation_date=self._creation_date,
                     url=self._url,
-                    text=todo_text))
+                    text=todo_text,
+                    extra_info=self._get_extra_info()))
 
         return todos
 
@@ -55,6 +56,12 @@ class Comment:
     def _type_as_str(self):
         """Return the type of this comment as a string"""
         raise NotImplementedError
+
+    # This method can be overridden by derived classes
+    def _get_extra_info(self):
+        # pylint: disable=no-self-use
+        """Return a string containing any extra info associated with this comment, or None"""
+        return None
 
     def __repr__(self):
         return(type(self).__name__ +
@@ -111,6 +118,9 @@ class PRLineComment(Comment):
 
     def _type_as_str(self):
         return "PR line comment ({})".format(self._path)
+
+    def _get_extra_info(self):
+        return self._path
 
     def __repr__(self):
         return(type(self).__name__ +

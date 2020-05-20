@@ -120,7 +120,7 @@ class CommentTodo:
         """Return the creation date of this todo"""
         return self._creation_date
 
-    def get_text(self):
+    def _get_text(self):
         """Return the text of this todo
 
         This includes a possible 'optional' prefix, but not any extra info
@@ -165,7 +165,7 @@ class CommentTodo:
                "extra_info={extra_info})".format(username=repr(self._username),
                                                  creation_date=repr(self._creation_date),
                                                  url=repr(self._url),
-                                                 text=repr(self.get_text()),
+                                                 text=repr(self._get_text()),
                                                  extra_info=repr(self._extra_info)))
 
     def __str__(self):
