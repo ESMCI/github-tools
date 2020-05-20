@@ -213,6 +213,15 @@ class TestCommentTodo(unittest.TestCase):
         t2 = eval(repr(t))
         self.assertEqual(t2, t)
 
+    def test_repr_optional_resultsInEqualObject(self):
+        """The repr of a CommentTodo object with optional prefix should result in equiv object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
+        t = self._create_comment_todo(text="[optional] Not necessary")
+        # pylint: disable=eval-used
+        t2 = eval(repr(t))
+        self.assertEqual(t2, t)
+
     def test_str_works(self):
         """Just make sure that the str method runs successfully"""
         t = self._create_comment_todo()
