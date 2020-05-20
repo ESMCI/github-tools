@@ -133,7 +133,7 @@ class TestPRLineComment(unittest.TestCase):
         path = "path/to/file.py"
         c = self._create_comment(content=content, path=path)
         todos = c.get_todos()
-        self.assertEqual(todos[0].get_full_text(), "[path/to/file.py] This is a task")
+        self.assertEqual(todos[0].get_full_text(), "{path/to/file.py} This is a task")
 
 if __name__ == '__main__':
     unittest.main()

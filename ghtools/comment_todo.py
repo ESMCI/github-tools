@@ -138,7 +138,7 @@ class CommentTodo:
         if self.is_optional():
             prefix += "[OPTIONAL] "
         if self._extra_info:
-            prefix += "[{extra_info}] ".format(extra_info=self._extra_info)
+            prefix += "{{{extra_info}}} ".format(extra_info=self._extra_info)
         return prefix + self._text
 
     def is_optional(self):

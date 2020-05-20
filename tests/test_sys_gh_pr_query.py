@@ -76,7 +76,7 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
 - Do a task from the body's second checklist
   (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
-- Please change "PR" to "Pull Request"
+- {README.md} Please change "PR" to "Pull Request"
   (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 
 - Add a section on Demo deletions
@@ -88,7 +88,7 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
 - [OPTIONAL] Do a task suggested in the body
   (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
 
-- [OPTIONAL] Please change "just" to "only"
+- [OPTIONAL] {README.md} Please change "just" to "only"
   (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 """
 
