@@ -69,7 +69,7 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 _TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
 _TODO_RE = re.compile(_TODO)
 
-_OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))"
+_OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))\s*"
 _OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
 
 # ------------------------------------------------------------------------
@@ -123,7 +123,7 @@ class CommentTodo:
     def get_text(self):
         """Return the text of this todo"""
         if self.is_optional():
-            return "[OPTIONAL]" + self._text
+            return "[OPTIONAL] " + self._text
         return self._text
 
     def is_optional(self):
