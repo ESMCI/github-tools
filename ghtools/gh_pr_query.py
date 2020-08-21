@@ -14,10 +14,11 @@ def main():
                 pr_number=args.pr_number,
                 show=args.show,
                 todo=args.todo,
-                filter_username=args.filter_username)
+                filter_username=args.filter_username,
+                verbose=args.verbose)
 
 def gh_pr_query(repo, pr_number, show, todo,
-                filter_username=None):
+                filter_username=None, verbose=False):
     """Implementation of the gh-pr-query command
 
     Args:
@@ -27,24 +28,33 @@ def gh_pr_query(repo, pr_number, show, todo,
     todo: boolean - Whether to print all outstanding todo items in this PR
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
+    verbose: boolean - Whether verbose output is enabled
     """
     pull_request = fetch_pull_request(repo=repo,
                                       pr_number=pr_number)
     if show:
         print(pull_request.get_content(filter_username=filter_username))
     if todo:
-        print_pr_todos(pull_request, filter_username=filter_username)
+        if verbose:
+            print(pull_request.get_header() + '\n')
+        print_pr_todos(pull_request,
+                       filter_username=filter_username,
+                       verbose=verbose)
 
-def print_pr_todos(pull_request, filter_username=None):
+def print_pr_todos(pull_request, filter_username=None, verbose=False):
     """Print all outstanding todo items for the given PullRequest
 
     Args:
     pull_request: PullRequest object
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
+    verbose: boolean - Whether verbose output is enabled
     """
-    for todo in pull_request.get_todos(filter_username=filter_username):
+    all_todos = pull_request.get_todos(filter_username=filter_username)
+    for todo in all_todos:
         print(str(todo) + "\n")
+    if verbose and not all_todos:
+        print('NO OUTSTANDING TODO ITEMS')
 
 # ========================================================================
 # Private functions
@@ -95,6 +105,9 @@ Example:
 
     parser.add_argument('-u', '--filter-username',
                         help='Only show comments made by the given user')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Enable verbose output')
 
     args = parser.parse_args()
     return args

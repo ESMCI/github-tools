@@ -34,17 +34,22 @@ class PullRequest:
         If filter_username is provided (not None), then it should be a string; only
         comments authored by that username are included in the returned string.
         """
-        my_str = ("PR #{pr_number}: '{title}' by {username} on {creation_date} ({url}):".format(
-            pr_number=self._pr_number,
-            title=self._title,
-            username=self._username,
-            creation_date=self._creation_date,
-            url=self._url))
+        my_str = self.get_header()
 
         for comment in self._filter_comments(filter_username=filter_username):
             my_str += "\n\n" + str(comment)
 
         return my_str
+
+    def get_header(self):
+        """Return a string giving the header for this PullRequest
+        """
+        return ("PR #{pr_number}: '{title}' by {username} on {creation_date} ({url}):".format(
+            pr_number=self._pr_number,
+            title=self._title,
+            username=self._username,
+            creation_date=self._creation_date,
+            url=self._url))
 
     def get_todos(self, filter_username=None):
         """Return a list of all lines in the PR body and all comments that represent todos
