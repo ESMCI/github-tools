@@ -51,19 +51,21 @@ class PullRequest:
             creation_date=self._creation_date,
             url=self._url))
 
-    def get_todos(self, filter_username=None):
+    def get_todos(self, completed=False, filter_username=None):
         """Return a list of all lines in the PR body and all comments that represent todos
 
         Returns a list of CommentTodo objects; all required todos come first, followed by
         optional todos; within each category (required and optional), they are sorted by
         date.
 
-        If filter_username is provided (not None), then it should be a string; only todos
-        authored by that username are returned.
+        Args:
+        completed: boolean - whether to look for completed todos instead of incomplete todos
+        filter_username: if provided (not None), then it should be a string; only todos
+            authored by that username are returned.
         """
         todos = []
         for one_comment in self._filter_comments(filter_username=filter_username):
-            todos.extend(one_comment.get_todos())
+            todos.extend(one_comment.get_todos(completed=completed))
         todos.sort(key=lambda t: (t.is_optional(), t.get_creation_date()))
         return todos
 

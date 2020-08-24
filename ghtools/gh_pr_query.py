@@ -14,11 +14,12 @@ def main():
                 pr_number=args.pr_number,
                 show=args.show,
                 todo=args.todo,
+                completed=args.completed,
                 filter_username=args.filter_username,
                 verbose=args.verbose)
 
 def gh_pr_query(repo, pr_number, show, todo,
-                filter_username=None, verbose=False):
+                completed=False, filter_username=None, verbose=False):
     """Implementation of the gh-pr-query command
 
     Args:
@@ -26,6 +27,8 @@ def gh_pr_query(repo, pr_number, show, todo,
     pr_number: integer - Pull Request number
     show: boolean - Whether to print all comments from this PR
     todo: boolean - Whether to print all outstanding todo items in this PR
+    completed: boolean - Whether to look for completed todos instead of incomplete todos
+        (only relevant if todo is True)
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
     verbose: boolean - Whether verbose output is enabled
@@ -38,23 +41,29 @@ def gh_pr_query(repo, pr_number, show, todo,
         if verbose:
             print(pull_request.get_header() + '\n')
         print_pr_todos(pull_request,
+                       completed=completed,
                        filter_username=filter_username,
                        verbose=verbose)
 
-def print_pr_todos(pull_request, filter_username=None, verbose=False):
+def print_pr_todos(pull_request, completed=False, filter_username=None, verbose=False):
     """Print all outstanding todo items for the given PullRequest
 
     Args:
     pull_request: PullRequest object
+    completed: boolean - whether to look for completed todos instead of incomplete todos
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
     verbose: boolean - Whether verbose output is enabled
     """
-    all_todos = pull_request.get_todos(filter_username=filter_username)
+    all_todos = pull_request.get_todos(completed=completed,
+                                       filter_username=filter_username)
     for todo in all_todos:
         print(str(todo) + "\n")
     if verbose and not all_todos:
-        print('NO OUTSTANDING TODO ITEMS')
+        if completed:
+            print('NO COMPLETED TODO ITEMS')
+        else:
+            print('NO OUTSTANDING TODO ITEMS')
 
 # ========================================================================
 # Private functions
@@ -106,8 +115,16 @@ Example:
     parser.add_argument('-u', '--filter-username',
                         help='Only show comments made by the given user')
 
+    parser.add_argument('-c', '--completed', action='store_true',
+                        help='Can be combined with -t/--todo to show completed todo items\n'
+                        'instead of outstanding todo items')
+
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Enable verbose output')
 
     args = parser.parse_args()
+
+    if args.completed and not args.todo:
+        parser.error('-c/--completed can only be given along with -t/--todo')
+
     return args

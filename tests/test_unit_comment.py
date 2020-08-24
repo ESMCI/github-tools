@@ -79,7 +79,7 @@ with a task"""
 
     def test_getTodos_multiple(self):
         """Test the get_todos method when there are multiple todos"""
-        # In the following, there is a comment on the first line, the last line, and in
+        # In the following, there is a todo on the first line, the last line, and in
         # the middle, as well as a completed task that should NOT be picked up.
         content = """\
 - [ ] Task 1
@@ -95,6 +95,25 @@ More text
         self.assertEqual(todos[0].get_full_text(), "Task 1")
         self.assertEqual(todos[1].get_full_text(), "Task 2")
         self.assertEqual(todos[2].get_full_text(), "Task 3")
+
+    def test_getTodos_completed_multiple(self):
+        """Test the get_todos method with completed=True when there are multiple todos"""
+        # In the following, there is a completed todo on the first line, the last line, and in
+        # the middle, as well as an incomplete task that should NOT be picked up.
+        content = """\
+- [x] Task 1
+Some text
+- [x] Task 2
+More text
+- [ ] Incomplete task
+More text
+- [x] Task 3"""
+        c = self._create_comment(content=content)
+        todos = c.get_todos(completed=True)
+        self.assertEqual(len(todos), 3)
+        self.assertEqual(todos[0].get_full_text(), "[COMPLETED] Task 1")
+        self.assertEqual(todos[1].get_full_text(), "[COMPLETED] Task 2")
+        self.assertEqual(todos[2].get_full_text(), "[COMPLETED] Task 3")
 
 # Extra tests of PRLineComment class, since this class has some unique behavior
 class TestPRLineComment(unittest.TestCase):

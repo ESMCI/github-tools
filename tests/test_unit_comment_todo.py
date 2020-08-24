@@ -184,6 +184,34 @@ class TestSearchLineForTodo(unittest.TestCase):
         result = search_line_for_todo("- --[ ] todo")
         self.assertIsNone(result)
 
+    # ------------------------------------------------------------------------
+    # Tests of search_line_for_todo with completed=True: searches expected to find something
+    # ------------------------------------------------------------------------
+
+    def test_search_completed_lowercasex(self):
+        """Make sure we find a completed todo like '- [x] todo'"""
+        result = search_line_for_todo("- [x] todo", completed=True)
+        self.assertEqual(result, "todo")
+
+    def test_search_completed_uppercasex(self):
+        """Make sure we find a completed todo like '- [X] todo'"""
+        result = search_line_for_todo("- [X] todo", completed=True)
+        self.assertEqual(result, "todo")
+
+    # ------------------------------------------------------------------------
+    # Tests of search_line_for_todo with completed=True: searches NOT expected to find something
+    # ------------------------------------------------------------------------
+
+    def test_search_completed_y_fails(self):
+        """If the checkbox is 'checked' with '[y]' instead of '[x'], should fail"""
+        result = search_line_for_todo("- [y] todo", completed=True)
+        self.assertIsNone(result)
+
+    def test_search_completed_unchecked_fails(self):
+        """If the checkbox is unchecked, should fail"""
+        result = search_line_for_todo("- [ ] todo", completed=True)
+        self.assertIsNone(result)
+
 # ------------------------------------------------------------------------
 # Tests of the CommentTodo class
 # ------------------------------------------------------------------------
@@ -192,7 +220,7 @@ class TestCommentTodo(unittest.TestCase):
     """Tests of CommentTodo class"""
 
     @staticmethod
-    def _create_comment_todo(text=None, extra_info=None):
+    def _create_comment_todo(text=None, extra_info=None, completed=False):
         """Returns a basic CommentTodo object
 
         If text is None, some default text will be used
@@ -203,7 +231,8 @@ class TestCommentTodo(unittest.TestCase):
                            creation_date=datetime.datetime(2020, 1, 1),
                            url="https://github.com/org/repo/1#issuecomment-2",
                            text=text,
-                           extra_info=extra_info)
+                           extra_info=extra_info,
+                           completed=completed)
 
     def test_repr_resultsInEqualObject(self):
         """The repr of a CommentTodo object should result in an equivalent object"""
@@ -228,6 +257,13 @@ class TestCommentTodo(unittest.TestCase):
         # This ability to recreate the object isn't a strict requirement, so if it gets
         # hard to maintain, we can drop it.
         t = self._create_comment_todo(extra_info="extra stuff")
+        # pylint: disable=eval-used
+        t2 = eval(repr(t))
+        self.assertEqual(t2, t)
+
+    def test_repr_completed_resultsInEqualObject(self):
+        """The repr of a CommentTodo object that is completed should result in equiv object"""
+        t = self._create_comment_todo(completed=True)
         # pylint: disable=eval-used
         t2 = eval(repr(t))
         self.assertEqual(t2, t)
@@ -290,6 +326,11 @@ class TestCommentTodo(unittest.TestCase):
         """Test get_full_text with an optional todo that also has extra info"""
         t = self._create_comment_todo(text="[optional]  My text", extra_info="Extra stuff")
         self.assertEqual(t.get_full_text(), "[OPTIONAL] {Extra stuff} My text")
+
+    def test_getFullText_optionalAndExtraInfoAndCompleted(self):
+        """Test get_full_text with an optional todo that also has extra info and is completed"""
+        t = self._create_comment_todo(text="[optional]  My text", extra_info="Extra stuff", completed=True)
+        self.assertEqual(t.get_full_text(), "[COMPLETED] [OPTIONAL] {Extra stuff} My text")
 
 if __name__ == '__main__':
     unittest.main()

@@ -33,22 +33,26 @@ class Comment:
         """Return the creation date of this comment"""
         return self._creation_date
 
-    def get_todos(self):
+    def get_todos(self, completed=False):
         """Return a list of all lines in the comment that represent todos
 
         Returns a list of CommentTodo objects (or an empty list if there are no todos in
         this comment)
+
+        Args:
+        completed: boolean - whether to look for completed todos instead of incomplete todos
         """
         todos = []
         for line in self._content.splitlines():
-            todo_text = search_line_for_todo(line)
+            todo_text = search_line_for_todo(line, completed=completed)
             if todo_text is not None:
                 todos.append(CommentTodo(
                     username=self._username,
                     creation_date=self._creation_date,
                     url=self._url,
                     text=todo_text,
-                    extra_info=self._get_extra_info()))
+                    extra_info=self._get_extra_info(),
+                    completed=completed))
 
         return todos
 

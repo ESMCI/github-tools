@@ -24,6 +24,9 @@ _LIST = _UOL + r"\s+"
 # checkbox: '[ ]' followed by one or more whitespace characters
 _CHECKBOX = r"\[ \]\s+"
 
+# completed checkbox: '[x]' or '[X]' followed by one or more whitespace characters
+_CHECKBOX_COMPLETED = r"\[[xX]\]\s+"
+
 # quote: '>' followed by any number of spaces
 _QUOTE = r">\s*"
 
@@ -66,8 +69,11 @@ _ANY_NUM_LIST_OR_QUOTE = r"(?:" + _LIST + r"|" + _QUOTE + r")*"
 #   - We accept something that looks like a tasklist item inside a multiline code block:
 #     We parse line by line, detecting when we're inside a code block would add a
 #     significant amount of work.
-_TODO = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + _CHECKBOX + r"(\S.+)"
-_TODO_RE = re.compile(_TODO)
+def _make_todo_re(checkbox):
+    todo_re_str = r"^\s*" + _ANY_NUM_LIST_OR_QUOTE + _LIST + _UOL + r"?" + checkbox + r"(\S.+)"
+    return re.compile(todo_re_str)
+_TODO_RE = _make_todo_re(_CHECKBOX)
+_TODO_COMPLETED_RE = _make_todo_re(_CHECKBOX_COMPLETED)
 
 _OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))\s*"
 _OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
@@ -76,7 +82,7 @@ _OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
 # Functions
 # ------------------------------------------------------------------------
 
-def search_line_for_todo(line):
+def search_line_for_todo(line, completed=False):
     """Search a line of text for a todo item; return the found match
 
     If the line is a todo item, then returns the part of the line following the todo
@@ -84,8 +90,13 @@ def search_line_for_todo(line):
 
     Args:
     line: string - one line of text
+    completed: boolean - if True, find only completed todo items; if False, find only
+        uncompleted todo items
     """
-    match = _TODO_RE.search(line)
+    if completed:
+        match = _TODO_COMPLETED_RE.search(line)
+    else:
+        match = _TODO_RE.search(line)
     if match is None:
         return None
     return match.group(1)
@@ -97,7 +108,7 @@ def search_line_for_todo(line):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, creation_date, url, text, extra_info=None):
+    def __init__(self, username, creation_date, url, text, extra_info=None, completed=False):
         """Initialize a CommentTodo object.
 
         Args:
@@ -109,12 +120,14 @@ class CommentTodo:
            the search_line_for_todo function
         extra_info: string - optional extra information to print in the output
            This isn't included in 'text' because it gets inserted thoughtfully in the output
+        completed: boolean: Whether this is a completed todo
         """
         self._username = username
         self._creation_date = creation_date
         self._url = url
         self._text, self._is_optional = self._strip_optional_prefix(text)
         self._extra_info = extra_info
+        self._completed = completed
 
     def get_creation_date(self):
         """Return the creation date of this todo"""
@@ -132,9 +145,12 @@ class CommentTodo:
     def get_full_text(self):
         """Return the text of this todo
 
-        This includes a possible 'optional' prefix and also any extra info
+        This includes possible 'completed' and/or 'optional' prefixes, and also any extra
+        info
         """
         prefix = ""
+        if self.is_completed():
+            prefix += "[COMPLETED] "
         if self.is_optional():
             prefix += "[OPTIONAL] "
         if self._extra_info:
@@ -144,6 +160,10 @@ class CommentTodo:
     def is_optional(self):
         """Returns true if this is an optional todo"""
         return self._is_optional
+
+    def is_completed(self):
+        """Returns true if this is a completed todo"""
+        return self._completed
 
     @staticmethod
     def _strip_optional_prefix(text):
@@ -162,11 +182,13 @@ class CommentTodo:
                "creation_date={creation_date}, "
                "url={url}, "
                "text={text}, "
-               "extra_info={extra_info})".format(username=repr(self._username),
-                                                 creation_date=repr(self._creation_date),
-                                                 url=repr(self._url),
-                                                 text=repr(self._get_text()),
-                                                 extra_info=repr(self._extra_info)))
+               "extra_info={extra_info}, "
+               "completed={completed})".format(username=repr(self._username),
+                                               creation_date=repr(self._creation_date),
+                                               url=repr(self._url),
+                                               text=repr(self._get_text()),
+                                               extra_info=repr(self._extra_info),
+                                               completed=repr(self._completed)))
 
     def __str__(self):
         text_as_list_item = "- {}".format(self.get_full_text())
