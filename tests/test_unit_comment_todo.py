@@ -329,7 +329,9 @@ class TestCommentTodo(unittest.TestCase):
 
     def test_getFullText_optionalAndExtraInfoAndCompleted(self):
         """Test get_full_text with an optional todo that also has extra info and is completed"""
-        t = self._create_comment_todo(text="[optional]  My text", extra_info="Extra stuff", completed=True)
+        t = self._create_comment_todo(text="[optional]  My text",
+                                      extra_info="Extra stuff",
+                                      completed=True)
         self.assertEqual(t.get_full_text(), "[COMPLETED] [OPTIONAL] {Extra stuff} My text")
 
 if __name__ == '__main__':

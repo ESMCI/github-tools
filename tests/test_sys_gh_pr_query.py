@@ -17,6 +17,11 @@ from ghtools.gh_pr_query import gh_pr_query
 # to make readable unit test names
 # pylint: disable=invalid-name
 
+def _remove_whitespace(string):
+    """Return a version of the input string with whitespace removed"""
+    whitespace_re = re.compile(r"\s+")
+    return whitespace_re.sub('', string)
+
 class TestSysGhPrQuery(unittest.TestCase):
     """System tests of gh_pr_query"""
 
@@ -29,7 +34,8 @@ class TestSysGhPrQuery(unittest.TestCase):
             gh_pr_query(repo="ESMCI/github-tools",
                         pr_number=1,
                         show=True,
-                        todo=True)
+                        todo=True,
+                        completed=False)
         output = stdout_redirect.getvalue()
 
         # Note that this is the same as what's given in the example in the top-level
@@ -94,16 +100,42 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
 
         # Remove all whitespace before comparing, so that the test won't fail if we just
         # change some of the output formatting.
-        whitespace_re = re.compile(r"\s+")
-        expected_show_output_no_whitespace = whitespace_re.sub('', expected_show_output)
-        expected_todo_output_no_whitespace = whitespace_re.sub('', expected_todo_output)
-        output_no_whitespace = whitespace_re.sub('', output)
+        expected_show_output_no_whitespace = _remove_whitespace(expected_show_output)
+        expected_todo_output_no_whitespace = _remove_whitespace(expected_todo_output)
+        output_no_whitespace = _remove_whitespace(output)
 
         # We use assertIn so that we are insensitive to whether the show or todo output
         # appears first. (As noted above, it is not typical to run gh_pr_query with both
         # show and todo, but we do it here for efficiency.)
         self.assertIn(expected_show_output_no_whitespace, output_no_whitespace)
         self.assertIn(expected_todo_output_no_whitespace, output_no_whitespace)
+
+    def test_ghPrQuery_completed_verbose(self):
+        """System test of gh_pr_query covering both the completed and verbose options"""
+        stdout_redirect = io.StringIO()
+        with contextlib.redirect_stdout(stdout_redirect):
+            gh_pr_query(repo="ESMCI/github-tools",
+                        pr_number=1,
+                        show=False,
+                        todo=False,
+                        completed=True,
+                        verbose=True)
+        output = stdout_redirect.getvalue()
+        expected_output = """\
+PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
+
+- [COMPLETED] Do another task suggested in the body
+  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+
+- [COMPLETED] I should do this
+  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
+"""
+        # Remove all whitespace before comparing, so that the test won't fail if we just
+        # change some of the output formatting.
+        expected_output_no_whitespace = _remove_whitespace(expected_output)
+        output_no_whitespace = _remove_whitespace(output)
+
+        self.assertEqual(output_no_whitespace, expected_output_no_whitespace)
 
 if __name__ == '__main__':
     unittest.main()
