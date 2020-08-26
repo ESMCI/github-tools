@@ -1,6 +1,7 @@
 """Functions implementing gh-pr-query tool"""
 
 import argparse
+import datetime
 from ghtools.github_fetch import fetch_pull_request
 
 # ========================================================================
@@ -16,10 +17,13 @@ def main():
                 todo=args.todo,
                 completed=args.completed,
                 filter_username=args.filter_username,
+                created_since=args.created_since,
+                updated_since=args.updated_since,
                 verbose=args.verbose)
 
 def gh_pr_query(repo, pr_number, show, todo, completed,
-                filter_username=None, verbose=False):
+                filter_username=None, created_since=None, updated_since=None,
+                verbose=False):
     """Implementation of the gh-pr-query command
 
     Args:
@@ -30,24 +34,40 @@ def gh_pr_query(repo, pr_number, show, todo, completed,
     completed: boolean - Whether to print all completed todo items in this PR
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
+    created_since: string or None - A string formatted as an ISO date/time (e.g.,
+        YYYY-MM-DD); if provided, will only show comments created since this date/time
+    updated_since: string or None - A string formatted as an ISO date/time (e.g.,
+        YYYY-MM-DD); if provided, will only show comments updated since this date/time
     verbose: boolean - Whether verbose output is enabled
     """
     pull_request = fetch_pull_request(repo=repo,
                                       pr_number=pr_number)
+
+    created_since_datetime = _date_string_to_datetime(created_since)
+    updated_since_datetime = _date_string_to_datetime(updated_since)
+
     if show:
-        print(pull_request.get_content(filter_username=filter_username))
+        print(pull_request.get_content(filter_username=filter_username,
+                                       created_since_time=created_since_datetime,
+                                       updated_since_time=updated_since_datetime))
     if todo:
         print_pr_todos(pull_request,
                        completed=False,
                        filter_username=filter_username,
+                       created_since_datetime=created_since_datetime,
+                       updated_since_datetime=updated_since_datetime,
                        verbose=verbose)
     if completed:
         print_pr_todos(pull_request,
                        completed=True,
                        filter_username=filter_username,
+                       created_since_datetime=created_since_datetime,
+                       updated_since_datetime=updated_since_datetime,
                        verbose=verbose)
 
-def print_pr_todos(pull_request, completed=False, filter_username=None, verbose=False):
+def print_pr_todos(pull_request, completed,
+                   filter_username, created_since_datetime, updated_since_datetime,
+                   verbose):
     """Print all outstanding todo items for the given PullRequest
 
     Args:
@@ -55,13 +75,19 @@ def print_pr_todos(pull_request, completed=False, filter_username=None, verbose=
     completed: boolean - whether to look for completed todos instead of outstanding todos
     filter_username: string or None - A GitHub user name; if provided, will only show
         comments authored by this user
+    created_since_datetime: datetime.datetime or None - If provided, will only show
+        comments created since this date/time
+    updated_since_datetime: datetime.datetime or None - If provided, will only show
+        comments updated since this date/time
     verbose: boolean - Whether verbose output is enabled
     """
     if verbose:
         print(pull_request.get_header() + '\n')
 
     all_todos = pull_request.get_todos(completed=completed,
-                                       filter_username=filter_username)
+                                       filter_username=filter_username,
+                                       created_since_time=created_since_datetime,
+                                       updated_since_time=updated_since_datetime)
     for todo in all_todos:
         print(str(todo) + "\n")
     if verbose and not all_todos:
@@ -123,9 +149,40 @@ Example:
     parser.add_argument('-u', '--filter-username',
                         help='Only show comments made by the given user')
 
+    parser.add_argument('--created-since',
+                        help='Only show comments created since the given date/time.\n'
+                        '(Format can be YYYY-MM-DD or other ISO-formatted date/time strings.\n'
+                        'Unless timezone is explicitly specified, date/time is assumed to be UTC.\n'
+                        'Requires python 3.7 or later.)')
+
+    parser.add_argument('--updated-since',
+                        help='Only show comments updated since the given date/time.\n'
+                        'Note that updated time is not available for the top-level PR comment\n'
+                        'and for top-level review comments. So we show these if anything in the\n'
+                        'PR has been updated since the given time.\n'
+                        'Also: based on experimentation, it seems like GitHub may update the\n'
+                        'last-updated time of comments more often than expected, so this option\n'
+                        'may show more than expected.\n'
+                        '(Format can be YYYY-MM-DD or other ISO-formatted date/time strings.\n'
+                        'Unless timezone is explicitly specified, date/time is assumed to be UTC.\n'
+                        'Requires python 3.7 or later.)')
+
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Enable verbose output')
 
     args = parser.parse_args()
 
     return args
+
+def _date_string_to_datetime(string):
+    """Convert the given string to a datetime.datetime object and return it
+
+    string should be formatted as an ISO date/time (e.g., YYYY-MM-DD)
+
+    If no timezone info is provided in the string, it is assumed to be in UTC.
+
+    If string is None, then returns None
+    """
+    if string is None:
+        return None
+    return datetime.datetime.fromisoformat(string).astimezone()
