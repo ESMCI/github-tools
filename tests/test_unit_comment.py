@@ -5,6 +5,7 @@
 
 import unittest
 import datetime
+from ghtools.comment_time import CommentTime
 from ghtools.comment import ConversationComment, PRLineComment
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
@@ -22,8 +23,10 @@ class TestComment(unittest.TestCase):
         """
         if content is None:
             content = "My content"
+        time_info = CommentTime(creation_time=datetime.datetime(2020, 1, 1),
+                                last_updated_time=datetime.datetime(2020, 1, 2))
         return ConversationComment(username="me",
-                                   creation_date=datetime.datetime(2020, 1, 1),
+                                   time_info=time_info,
                                    url="https://github.com/org/repo/1#issuecomment-2",
                                    content=content)
 
@@ -131,8 +134,10 @@ class TestPRLineComment(unittest.TestCase):
             content = "My content"
         if path is None:
             path = "path/to/file.py"
+        time_info = CommentTime(creation_time=datetime.datetime(2020, 1, 1),
+                                last_updated_time=datetime.datetime(2020, 1, 2))
         return PRLineComment(username="me",
-                             creation_date=datetime.datetime(2020, 1, 1),
+                             time_info=time_info,
                              url="https://github.com/org/repo/1#issuecomment-2",
                              content=content,
                              path=path)

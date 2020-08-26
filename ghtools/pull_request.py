@@ -6,14 +6,14 @@ from ghtools.comment import PRBodyComment
 class PullRequest:
     """Class for holding information about a GitHub Pull Request"""
 
-    def __init__(self, pr_number, title, username, creation_date, url, body, comments):
+    def __init__(self, pr_number, title, username, time_info, url, body, comments):
         """Initialize a PullRequest object.
 
         Args:
         pr_number: integer
         title: string
         username: string
-        creation_date: datetime
+        time_info: CommentTime
         url: string
         body: string
         comments: iterable of Comments
@@ -22,7 +22,7 @@ class PullRequest:
         self._pr_number = pr_number
         self._title = title
         self._username = username
-        self._creation_date = creation_date
+        self._time_info = time_info
         self._url = url
         self._body = body
         self._comments = ([self._body_as_comment()] +
@@ -44,11 +44,11 @@ class PullRequest:
     def get_header(self):
         """Return a string giving the header for this PullRequest
         """
-        return ("PR #{pr_number}: '{title}' by {username} on {creation_date} ({url}):".format(
+        return ("PR #{pr_number}: '{title}' by {username} ({time_info}) <{url}>:".format(
             pr_number=self._pr_number,
             title=self._title,
             username=self._username,
-            creation_date=self._creation_date,
+            time_info=self._time_info,
             url=self._url))
 
     def get_todos(self, completed=False, filter_username=None):
@@ -81,8 +81,11 @@ class PullRequest:
 
     def _body_as_comment(self):
         """Return a Comment object representing the body of this PullRequest"""
+        # There doesn't seem to be a way to get the last-updated time of the body comment
+        # itself, so as a conservative guess, we use the last updated time of the PR as a
+        # whole.
         return PRBodyComment(username=self._username,
-                             creation_date=self._creation_date,
+                             time_info=self._time_info.as_guess(),
                              url=self._url,
                              content=self._body)
 
@@ -91,14 +94,14 @@ class PullRequest:
                "(pr_number={pr_number}, "
                "title={title}, "
                "username={username}, "
-               "creation_date={creation_date}, "
+               "time_info={time_info}, "
                "url={url}, "
                "body={body}, "
                "comments={comments})".format(
                    pr_number=repr(self._pr_number),
                    title=repr(self._title),
                    username=repr(self._username),
-                   creation_date=repr(self._creation_date),
+                   time_info=repr(self._time_info),
                    url=repr(self._url),
                    body=repr(self._body),
                    # In the following, note that we ignore the first comment, which is the PR body:

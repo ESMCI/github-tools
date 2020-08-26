@@ -41,9 +41,9 @@ class TestSysGhPrQuery(unittest.TestCase):
         # Note that this is the same as what's given in the example in the top-level
         # README file. These should be kept in sync.
         expected_show_output = """\
-PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
+PR #1: 'Changes for the sake of demo PR' by billsacks (at 2020-04-23 19:24:00-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1>:
 
-PR body by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
+PR body by billsacks (at 2020-04-23 19:24:00-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1>:
     This PR is for demonstration purposes only.
 
     There is a checklist in the body:
@@ -55,24 +55,24 @@ PR body by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/gith
 
     - [ ] Do a task from the body's second checklist
 
-PR line comment (README.md) by billsacks on 2020-04-23 19:25:28-06:00 (https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434):
+PR line comment (README.md) by billsacks (at 2020-04-23 19:25:28-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>:
     I would like the following changes to this line:
 
     - [ ] (optional) Please change "just" to "only"
     - [ ] Please change "PR" to "Pull Request"
 
-PR review comment by billsacks on 2020-04-23 19:25:49-06:00 (https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911):
+PR review comment by billsacks (at 2020-04-23 19:25:49-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>:
     In addition to my line comments, please also:
 
     - [ ] Add a section on Demo deletions
 
-Conversation comment by billsacks on 2020-04-23 19:26:39-06:00 (https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295):
+Conversation comment by billsacks (at 2020-04-23 19:26:39-06:00, last updated: 2020-04-23 19:37:52-06:00) <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>:
     PR comments can also include checklist items
 
     - [x] I should do this
     - [ ] I should do that
 
-Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.com/ESMCI/github-tools/pull/1#issuecomment-618616900):
+Conversation comment by billsacks (at 2020-04-23 19:34:19-06:00, last updated: never) <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618616900>:
     Closing this PR that was for demonstration purposes only.
 """
 
@@ -80,22 +80,22 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
         # README file. These should be kept in sync.
         expected_todo_output = """\
 - Do a task from the body's second checklist
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+  (billsacks (at 2020-04-23 19:24:00-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1>)
 
 - {README.md} Please change "PR" to "Pull Request"
-  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+  (billsacks (at 2020-04-23 19:25:28-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 
 - Add a section on Demo deletions
-  (billsacks at 2020-04-23 19:25:49-06:00, <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
+  (billsacks (at 2020-04-23 19:25:49-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1#pullrequestreview-399407911>)
 
 - I should do that
-  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
+  (billsacks (at 2020-04-23 19:26:39-06:00, last updated: 2020-04-23 19:37:52-06:00) <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
 
 - [OPTIONAL] Do a task suggested in the body
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+  (billsacks (at 2020-04-23 19:24:00-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1>)
 
 - [OPTIONAL] {README.md} Please change "just" to "only"
-  (billsacks at 2020-04-23 19:25:28-06:00, <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
+  (billsacks (at 2020-04-23 19:25:28-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1#discussion_r414063434>)
 """
 
         # Remove all whitespace before comparing, so that the test won't fail if we just
@@ -122,13 +122,13 @@ Conversation comment by billsacks on 2020-04-23 19:34:19-06:00 (https://github.c
                         verbose=True)
         output = stdout_redirect.getvalue()
         expected_output = """\
-PR #1: 'Changes for the sake of demo PR' by billsacks on 2020-04-23 19:24:00-06:00 (https://github.com/ESMCI/github-tools/pull/1):
+PR #1: 'Changes for the sake of demo PR' by billsacks (at 2020-04-23 19:24:00-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1>:
 
 - [COMPLETED] Do another task suggested in the body
-  (billsacks at 2020-04-23 19:24:00-06:00, <https://github.com/ESMCI/github-tools/pull/1>)
+  (billsacks (at 2020-04-23 19:24:00-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1>)
 
 - [COMPLETED] I should do this
-  (billsacks at 2020-04-23 19:26:39-06:00, <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
+  (billsacks (at 2020-04-23 19:26:39-06:00, last updated: 2020-04-23 19:37:52-06:00) <https://github.com/ESMCI/github-tools/pull/1#issuecomment-618612295>)
 """
         # Remove all whitespace before comparing, so that the test won't fail if we just
         # change some of the output formatting.

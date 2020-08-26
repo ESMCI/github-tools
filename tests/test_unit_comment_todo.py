@@ -5,6 +5,7 @@
 
 import unittest
 import datetime
+from ghtools.comment_time import CommentTime
 from ghtools.comment_todo import search_line_for_todo, CommentTodo
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
@@ -227,8 +228,10 @@ class TestCommentTodo(unittest.TestCase):
         """
         if text is None:
             text = "My text"
+        time_info = CommentTime(creation_time=datetime.datetime(2020, 1, 1),
+                                last_updated_time=datetime.datetime(2020, 1, 2))
         return CommentTodo(username="me",
-                           creation_date=datetime.datetime(2020, 1, 1),
+                           time_info=time_info,
                            url="https://github.com/org/repo/1#issuecomment-2",
                            text=text,
                            extra_info=extra_info,

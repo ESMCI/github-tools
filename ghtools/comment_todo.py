@@ -108,12 +108,12 @@ def search_line_for_todo(line, completed=False):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, creation_date, url, text, extra_info=None, completed=False):
+    def __init__(self, username, time_info, url, text, extra_info=None, completed=False):
         """Initialize a CommentTodo object.
 
         Args:
         username: string
-        creation_date: datetime
+        time_info: CommentTime
         url: string
         text: string - this should be a single line, containing a single to do item,
            without the leading '- [ ]' or similar; typically, it will be the output from
@@ -123,7 +123,7 @@ class CommentTodo:
         completed: boolean: Whether this is a completed todo
         """
         self._username = username
-        self._creation_date = creation_date
+        self._time_info = time_info
         self._url = url
         self._text, self._is_optional = self._strip_optional_prefix(text)
         self._extra_info = extra_info
@@ -131,7 +131,7 @@ class CommentTodo:
 
     def get_creation_date(self):
         """Return the creation date of this todo"""
-        return self._creation_date
+        return self._time_info.get_creation_time()
 
     def _get_text(self):
         """Return the text of this todo
@@ -179,12 +179,12 @@ class CommentTodo:
     def __repr__(self):
         return(type(self).__name__ +
                "(username={username}, "
-               "creation_date={creation_date}, "
+               "time_info={time_info}, "
                "url={url}, "
                "text={text}, "
                "extra_info={extra_info}, "
                "completed={completed})".format(username=repr(self._username),
-                                               creation_date=repr(self._creation_date),
+                                               time_info=repr(self._time_info),
                                                url=repr(self._url),
                                                text=repr(self._get_text()),
                                                extra_info=repr(self._extra_info),
@@ -196,10 +196,10 @@ class CommentTodo:
                                      width=LINE_WIDTH,
                                      subsequent_indent='  ',
                                      break_long_words=False)
-        return("{text}\n  ({username} at {creation_date}, <{url}>)".format(
+        return("{text}\n  ({username} ({time_info}) <{url}>)".format(
             text=text_wrapped,
             username=self._username,
-            creation_date=self._creation_date,
+            time_info=self._time_info,
             url=self._url))
 
     def __eq__(self, other):

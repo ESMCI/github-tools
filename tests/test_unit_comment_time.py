@@ -14,22 +14,12 @@ from ghtools.comment_time import CommentTime
 class TestCommentTime(unittest.TestCase):
     """Tests of CommentTime class"""
 
-    def test_repr_withUpdatedTime_resultsInEqualObject(self):
-        """repr of a CommentTime object with an updated time should result in an equiv. object"""
+    def test_repr_resultsInEqualObject(self):
+        """repr of a CommentTime object should result in an equiv. object"""
         # This ability to recreate the object isn't a strict requirement, so if it gets
         # hard to maintain, we can drop it.
         ct = CommentTime(datetime.datetime(2020, 1, 1),
                          datetime.datetime(2020, 1, 2))
-        # pylint: disable=eval-used
-        ct2 = eval(repr(ct))
-        self.assertEqual(ct2, ct)
-
-    def test_repr_withoutUpdatedTime_resultsInEqualObject(self):
-        """repr of a CommentTime object without an updated time should result in an equiv. object"""
-        # This ability to recreate the object isn't a strict requirement, so if it gets
-        # hard to maintain, we can drop it.
-        ct = CommentTime(datetime.datetime(2020, 1, 1),
-                         last_updated_time=None)
         # pylint: disable=eval-used
         ct2 = eval(repr(ct))
         self.assertEqual(ct2, ct)
@@ -69,12 +59,16 @@ class TestCommentTime(unittest.TestCase):
         is_updated_since = ct.updated_since(datetime.datetime(2020, 1, 5))
         self.assertFalse(is_updated_since)
 
-    def test_updatedSince_None(self):
-        """Test updated_since method when updated time is None (it should be True)"""
+    def test_as_guess(self):
+        """Test the as_guess method"""
+        # pylint: disable=protected-access
         ct = CommentTime(datetime.datetime(2020, 1, 2),
-                         last_updated_time=None)
-        is_updated_since = ct.updated_since(datetime.datetime(2020, 1, 5))
-        self.assertTrue(is_updated_since)
+                         datetime.datetime(2020, 1, 4),
+                         updated_time_is_guess=False)
+        ct2 = ct.as_guess()
+        self.assertEqual(ct2._creation_time, ct._creation_time)
+        self.assertEqual(ct2._last_updated_time, ct._last_updated_time)
+        self.assertTrue(ct2._updated_time_is_guess)
 
 if __name__ == '__main__':
     unittest.main()

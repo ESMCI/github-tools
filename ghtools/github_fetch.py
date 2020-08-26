@@ -3,6 +3,7 @@
 import os
 from github import Github
 from ghtools.comment import ConversationComment, PRReviewComment, PRLineComment
+from ghtools.comment_time import CommentTime
 from ghtools.pull_request import PullRequest
 
 def fetch_pull_request(repo, pr_number):
@@ -16,17 +17,26 @@ def fetch_pull_request(repo, pr_number):
     gh_repo = gh_inst.get_repo(repo)
     gh_pr = gh_repo.get_pull(pr_number)
 
+    # This is the time that *anything* in the PR was last updated. We use this as a
+    # conservative guess of when comments were last updated if we don't have any other
+    # last-updated information for a given comment.
+    pr_last_updated = gh_pr.updated_at.astimezone()
+
     comments = []
     for gh_comment in gh_pr.get_issue_comments():
+        time_info = CommentTime(creation_time=gh_comment.created_at.astimezone(),
+                                last_updated_time=gh_comment.updated_at.astimezone())
         this_comment = ConversationComment(username=gh_comment.user.login,
-                                           creation_date=gh_comment.created_at.astimezone(),
+                                           time_info=time_info,
                                            url=gh_comment.html_url,
                                            content=gh_comment.body)
         comments.append(this_comment)
 
     for gh_comment in gh_pr.get_comments():
+        time_info = CommentTime(creation_time=gh_comment.created_at.astimezone(),
+                                last_updated_time=gh_comment.updated_at.astimezone())
         this_comment = PRLineComment(username=gh_comment.user.login,
-                                     creation_date=gh_comment.created_at.astimezone(),
+                                     time_info=time_info,
                                      url=gh_comment.html_url,
                                      content=gh_comment.body,
                                      path=gh_comment.path)
@@ -38,16 +48,24 @@ def fetch_pull_request(repo, pr_number):
             # made - even individual line comments made outside a review, or when you make
             # a set of line comments in a review but don't leave an overall
             # comment. Exclude empty reviews that are created in these circumstances.
+
+            # Pull Request Reviews don't appear to support a last-updated time, so we use
+            # the last updated time of the PR as a whole as a conservative guess.
+            time_info = CommentTime(creation_time=gh_comment.submitted_at.astimezone(),
+                                    last_updated_time=pr_last_updated,
+                                    updated_time_is_guess=True)
             this_comment = PRReviewComment(username=gh_comment.user.login,
-                                           creation_date=gh_comment.submitted_at.astimezone(),
+                                           time_info=time_info,
                                            url=gh_comment.html_url,
                                            content=gh_comment.body)
             comments.append(this_comment)
 
+    time_info = CommentTime(creation_time=gh_pr.created_at.astimezone(),
+                            last_updated_time=pr_last_updated)
     return PullRequest(pr_number=pr_number,
                        title=gh_pr.title,
                        username=gh_pr.user.login,
-                       creation_date=gh_pr.created_at.astimezone(),
+                       time_info=time_info,
                        url=gh_pr.html_url,
                        body=gh_pr.body,
                        comments=comments)

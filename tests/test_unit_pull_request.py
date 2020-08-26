@@ -7,6 +7,7 @@ import unittest
 import datetime
 from ghtools.pull_request import PullRequest
 from ghtools.comment import ConversationComment, PRReviewComment, PRLineComment
+from ghtools.comment_time import CommentTime
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -30,9 +31,10 @@ class TestPullRequest(unittest.TestCase):
             username = "you"
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 2)
+        time_info = CommentTime(creation_date, creation_date)
         return comment_type(
             username=username,
-            creation_date=creation_date,
+            time_info=time_info,
             url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
             content=content)
 
@@ -53,9 +55,10 @@ class TestPullRequest(unittest.TestCase):
             creation_date = datetime.datetime(2020, 1, 2)
         if path is None:
             path = "path/to/file.py"
+        time_info = CommentTime(creation_date, creation_date)
         return PRLineComment(
             username=username,
-            creation_date=creation_date,
+            time_info=time_info,
             url="https://github.com/org/repo/1#comment-{c_id}".format(c_id=comment_id),
             content=content,
             path=path)
@@ -91,10 +94,11 @@ class TestPullRequest(unittest.TestCase):
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 1)
 
+        time_info = CommentTime(creation_date, creation_date)
         return PullRequest(pr_number=17,
                            title="My title",
                            username=username,
-                           creation_date=creation_date,
+                           time_info=time_info,
                            url="https://github.com/org/repo/1",
                            body=body,
                            comments=comments)

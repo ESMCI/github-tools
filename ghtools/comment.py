@@ -11,17 +11,17 @@ from ghtools.constants import LINE_WIDTH, INDENT_LEVEL
 class Comment:
     """Class for holding information about a single GitHub comment"""
 
-    def __init__(self, username, creation_date, url, content):
+    def __init__(self, username, time_info, url, content):
         """Initialize a comment object.
 
         Args:
         username: string
-        creation_date: datetime
+        time_info: CommentTime
         url: string
         content: string
         """
         self._username = username
-        self._creation_date = creation_date
+        self._time_info = time_info
         self._url = url
         self._content = content
 
@@ -31,7 +31,7 @@ class Comment:
 
     def get_creation_date(self):
         """Return the creation date of this comment"""
-        return self._creation_date
+        return self._time_info.get_creation_time()
 
     def get_todos(self, completed=False):
         """Return a list of all lines in the comment that represent todos
@@ -48,7 +48,7 @@ class Comment:
             if todo_text is not None:
                 todos.append(CommentTodo(
                     username=self._username,
-                    creation_date=self._creation_date,
+                    time_info=self._time_info,
                     url=self._url,
                     text=todo_text,
                     extra_info=self._get_extra_info(),
@@ -70,19 +70,19 @@ class Comment:
     def __repr__(self):
         return(type(self).__name__ +
                "(username={username}, "
-               "creation_date={creation_date}, "
+               "time_info={time_info}, "
                "url={url}, "
                "content={content})".format(username=repr(self._username),
-                                           creation_date=repr(self._creation_date),
+                                           time_info=repr(self._time_info),
                                            url=repr(self._url),
                                            content=repr(self._content)))
 
     def __str__(self):
         content_filled = fill_multiparagraph(self._content, LINE_WIDTH-INDENT_LEVEL)
-        return("{comment_type} by {username} on {creation_date} ({url}):\n"
+        return("{comment_type} by {username} ({time_info}) <{url}>:\n"
                "{content}".format(comment_type=self._type_as_str(),
                                   username=self._username,
-                                  creation_date=self._creation_date,
+                                  time_info=self._time_info,
                                   url=self._url,
                                   content=textwrap.indent(content_filled, INDENT_LEVEL*" ")))
 
@@ -108,14 +108,14 @@ class PRReviewComment(Comment):
 
 class PRLineComment(Comment):
     """Class for holding a PR line comment"""
-    def __init__(self, username, creation_date, url, content, path):
+    def __init__(self, username, time_info, url, content, path):
         """Initialize a PRLineComment object
 
         Args: Same as for Comment base class except:
         path: string - path to file that comment applies to
         """
         super().__init__(username=username,
-                         creation_date=creation_date,
+                         time_info=time_info,
                          url=url,
                          content=content)
         self._path = path
@@ -129,11 +129,11 @@ class PRLineComment(Comment):
     def __repr__(self):
         return(type(self).__name__ +
                "(username={username}, "
-               "creation_date={creation_date}, "
+               "time_info={time_info}, "
                "url={url}, "
                "content={content}, "
                "path={path})".format(username=repr(self._username),
-                                     creation_date=repr(self._creation_date),
+                                     time_info=repr(self._time_info),
                                      url=repr(self._url),
                                      content=repr(self._content),
                                      path=repr(self._path)))
