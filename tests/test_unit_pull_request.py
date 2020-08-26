@@ -17,7 +17,8 @@ class TestPullRequest(unittest.TestCase):
     """Tests of PullRequest class"""
 
     @staticmethod
-    def _simple_comment(comment_type, comment_id, content, username=None, creation_date=None):
+    def _simple_comment(comment_type, comment_id, content,
+                        username=None, creation_date=None, updated_date=None):
         """Return a Comment object with some hard-coded pieces
 
         Args:
@@ -26,12 +27,15 @@ class TestPullRequest(unittest.TestCase):
         content (string)
         username (string): if not given, uses a hard-coded username
         creation_date (datetime): if not given, uses a hard-coded creation_date
+        updated_date (datetime): if not given, uses the same date as creation_date
         """
         if username is None:
             username = "you"
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 2)
-        time_info = CommentTime(creation_date, creation_date)
+        if updated_date is None:
+            updated_date = creation_date
+        time_info = CommentTime(creation_date, updated_date)
         return comment_type(
             username=username,
             time_info=time_info,
@@ -39,7 +43,9 @@ class TestPullRequest(unittest.TestCase):
             content=content)
 
     @staticmethod
-    def _simple_line_comment(comment_id, content, username=None, creation_date=None, path=None):
+    def _simple_line_comment(comment_id, content,
+                             username=None, creation_date=None, updated_date=None,
+                             path=None):
         """Return a PRLineComment object with some hard-coded pieces
 
         Args:
@@ -47,15 +53,18 @@ class TestPullRequest(unittest.TestCase):
         content (string)
         username (string): if not given, uses a hard-coded username
         creation_date (datetime): if not given, uses a hard-coded creation_date
+        updated_date (datetime): if not given, uses the same date as creation_date
         path (string): if not given, uses a hard-coded path
         """
         if username is None:
             username = "you"
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 2)
+        if updated_date is None:
+            updated_date = creation_date
         if path is None:
             path = "path/to/file.py"
-        time_info = CommentTime(creation_date, creation_date)
+        time_info = CommentTime(creation_date, updated_date)
         return PRLineComment(
             username=username,
             time_info=time_info,
@@ -64,7 +73,8 @@ class TestPullRequest(unittest.TestCase):
             path=path)
 
     @staticmethod
-    def _create_pr(body=None, comments=None, username=None, creation_date=None):
+    def _create_pr(body=None, comments=None,
+                   username=None, creation_date=None, updated_date=None):
         """Returns a basic PullRequest object
 
         If body is given, it should be a string; otherwise, a hard-coded body is used
@@ -76,6 +86,9 @@ class TestPullRequest(unittest.TestCase):
 
         If creation_date is given, it should be a datetime object; otherwise, a hard-coded
         creation_date is used.
+
+        If updated_date is given, it should be a datetime object; otherwise, we use the
+        same date as creation_date.
         """
         if body is None:
             body = "PR body"
@@ -94,7 +107,10 @@ class TestPullRequest(unittest.TestCase):
         if creation_date is None:
             creation_date = datetime.datetime(2020, 1, 1)
 
-        time_info = CommentTime(creation_date, creation_date)
+        if updated_date is None:
+            updated_date = creation_date
+
+        time_info = CommentTime(creation_date, updated_date)
         return PullRequest(pr_number=17,
                            title="My title",
                            username=username,
@@ -241,6 +257,43 @@ Or here."""
         self.assertEqual(len(todos), 2)
         self.assertEqual(todos[0].get_full_text(), "body task")
         self.assertEqual(todos[1].get_full_text(), "c2 task")
+
+    def test_getTodos_filterCreationDate(self):
+        """Test the get_todos method when a creation date is provided"""
+        c1 = self._simple_comment(ConversationComment, 1, "- [ ] c1 task",
+                                  username="user1",
+                                  creation_date=datetime.datetime(2020, 1, 4),
+                                  updated_date=datetime.datetime(2020, 2, 6))
+        c2 = self._simple_comment(ConversationComment, 2, "- [ ] c2 task",
+                                  username="user1",
+                                  creation_date=datetime.datetime(2020, 1, 6),
+                                  updated_date=datetime.datetime(2020, 2, 4))
+        pr = self._create_pr(body="- [ ] body task", comments=(c1, c2),
+                             username="user1",
+                             creation_date=datetime.datetime(2020, 1, 2),
+                             updated_date=datetime.datetime(2020, 2, 8))
+        todos = pr.get_todos(created_since_time=datetime.datetime(2020, 1, 5))
+        self.assertEqual(len(todos), 1)
+        self.assertEqual(todos[0].get_full_text(), "c2 task")
+
+    def test_getTodos_filterUpdatedDate(self):
+        """Test the get_todos method when an updated date is provided"""
+        c1 = self._simple_comment(ConversationComment, 1, "- [ ] c1 task",
+                                  username="user1",
+                                  creation_date=datetime.datetime(2020, 1, 4),
+                                  updated_date=datetime.datetime(2020, 2, 6))
+        c2 = self._simple_comment(ConversationComment, 2, "- [ ] c2 task",
+                                  username="user1",
+                                  creation_date=datetime.datetime(2020, 1, 6),
+                                  updated_date=datetime.datetime(2020, 2, 4))
+        pr = self._create_pr(body="- [ ] body task", comments=(c1, c2),
+                             username="user1",
+                             creation_date=datetime.datetime(2020, 1, 2),
+                             updated_date=datetime.datetime(2020, 2, 8))
+        todos = pr.get_todos(updated_since_time=datetime.datetime(2020, 2, 5))
+        self.assertEqual(len(todos), 2)
+        self.assertEqual(todos[0].get_full_text(), "body task")
+        self.assertEqual(todos[1].get_full_text(), "c1 task")
 
 if __name__ == '__main__':
     unittest.main()

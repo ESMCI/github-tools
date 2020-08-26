@@ -28,15 +28,23 @@ class PullRequest:
         self._comments = ([self._body_as_comment()] +
                           sorted(comments, key=lambda c: c.get_creation_date()))
 
-    def get_content(self, filter_username=None):
+    def get_content(self, filter_username=None, created_since_time=None, updated_since_time=None):
         """Return a string representation of this PullRequest
 
         If filter_username is provided (not None), then it should be a string; only
         comments authored by that username are included in the returned string.
+
+        If created_since_time is provided (not None), then it should be a datetime.datetime
+        object; only comments created on or after that time are included.
+
+        If updated_since_time is provided (not None), then it should be a datetime.datetime
+        object; only comments updated on or after that time are included.
         """
         my_str = self.get_header()
 
-        for comment in self._filter_comments(filter_username=filter_username):
+        for comment in self._filter_comments(filter_username=filter_username,
+                                             created_since_time=created_since_time,
+                                             updated_since_time=updated_since_time):
             my_str += "\n\n" + str(comment)
 
         return my_str
@@ -51,7 +59,8 @@ class PullRequest:
             time_info=self._time_info,
             url=self._url))
 
-    def get_todos(self, completed=False, filter_username=None):
+    def get_todos(self, completed=False,
+                  filter_username=None, created_since_time=None, updated_since_time=None):
         """Return a list of all lines in the PR body and all comments that represent todos
 
         Returns a list of CommentTodo objects; all required todos come first, followed by
@@ -62,22 +71,35 @@ class PullRequest:
         completed: boolean - whether to look for completed todos instead of incomplete todos
         filter_username: if provided (not None), then it should be a string; only todos
             authored by that username are returned.
+        created_since_time: if provided (not None), then it should be a datetime.datetime
+            object; only comments created on or after that time are included.
+        updated_since_time: if provided (not None), then it should be a datetime.datetime
+            object; only comments updated on or after that time are included.
         """
         todos = []
-        for one_comment in self._filter_comments(filter_username=filter_username):
+        for one_comment in self._filter_comments(filter_username=filter_username,
+                                                 created_since_time=created_since_time,
+                                                 updated_since_time=updated_since_time):
             todos.extend(one_comment.get_todos(completed=completed))
         todos.sort(key=lambda t: (t.is_optional(), t.get_creation_date()))
         return todos
 
-    def _filter_comments(self, filter_username=None):
+    def _filter_comments(self, filter_username, created_since_time, updated_since_time):
         """Return a list of comments, possibly filtered by some attributes
 
         Args:
-        filter_username: string or None - if provided, only comments authored by this
-        username are included
+        filter_username: string or None - if provided (not None), only comments authored
+            by this username are included
+        created_since_time: datetime.datetime or None - if provided (not None), only comments
+            created on or after this time are included
+        updated_since_time: datetime.datetime or None - if provided (not None), only comments
+            updated on or after this time are included
         """
+        # pylint: disable=line-too-long
         return [c for c in self._comments
-                if (filter_username is None or c.get_username() == filter_username)]
+                if ((filter_username is None or c.get_username() == filter_username) and
+                    (created_since_time is None or c.get_time_info().created_since(created_since_time)) and
+                    (updated_since_time is None or c.get_time_info().updated_since(updated_since_time)))]
 
     def _body_as_comment(self):
         """Return a Comment object representing the body of this PullRequest"""

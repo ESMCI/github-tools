@@ -29,6 +29,13 @@ class Comment:
         """Return the username that authored this comment"""
         return self._username
 
+    def get_time_info(self):
+        """Return the time info object associated with this comment
+
+        Returns a CommentTime object
+        """
+        return self._time_info
+
     def get_creation_date(self):
         """Return the creation date of this comment"""
         return self._time_info.get_creation_time()
