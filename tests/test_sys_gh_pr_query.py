@@ -124,6 +124,8 @@ Conversation comment by billsacks (at 2020-04-23 19:34:19-06:00, last updated: n
         expected_output = """\
 PR #1: 'Changes for the sake of demo PR' by billsacks (at 2020-04-23 19:24:00-06:00, last updated: 2020-04-29 13:18:59-06:00) <https://github.com/ESMCI/github-tools/pull/1>:
 
+2 COMPLETED TODO ITEMS
+
 - [COMPLETED] Do another task suggested in the body
   (billsacks (at 2020-04-23 19:24:00-06:00, last updated: unknown) <https://github.com/ESMCI/github-tools/pull/1>)
 

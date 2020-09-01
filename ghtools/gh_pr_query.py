@@ -88,13 +88,14 @@ def print_pr_todos(pull_request, completed,
                                        filter_username=filter_username,
                                        created_since_time=created_since_datetime,
                                        updated_since_time=updated_since_datetime)
+    if verbose:
+        if completed:
+            description = 'COMPLETED'
+        else:
+            description = 'OUTSTANDING'
+        print('{} {} TODO ITEMS\n'.format(len(all_todos), description))
     for todo in all_todos:
         print(str(todo) + "\n")
-    if verbose and not all_todos:
-        if completed:
-            print('NO COMPLETED TODO ITEMS')
-        else:
-            print('NO OUTSTANDING TODO ITEMS')
 
 # ========================================================================
 # Private functions
