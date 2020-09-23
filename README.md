@@ -118,6 +118,21 @@ wiki](https://github.com/ESMCI/github-tools/wiki/Recommended-pull-request-workfl
 for the recommended workflow in order to most effectively leverage this
 tool's `--todo` option.
 
+### gh-org-query
+
+Tool for querying GitHub organizations
+
+Currently, the only supported usage of this tool is to get an
+alphabetical list of repositories in the organization:
+
+    gh-org-query -o ORG -r
+
+Note that private repositories will only be shown if your access token
+has appropriate permissions (including `repo` permissions to access
+private repositories). See [the section
+below](#Providing-a-personal-access-token) for instructions on providing
+a personal access token to this and other tools.
+
 ## Providing a personal access token
 
 The tools here optionally allow you to set a GitHub personal access

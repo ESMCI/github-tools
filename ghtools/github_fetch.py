@@ -13,7 +13,7 @@ def fetch_pull_request(repo, pr_number):
     repo: string - in the format Org/Repo
     pr_number: integer - PR ID in this repo
     """
-    gh_inst = Github(login_or_token=_get_access_token())
+    gh_inst = _get_github_instance()
     gh_repo = gh_inst.get_repo(repo)
     gh_pr = gh_repo.get_pull(pr_number)
 
@@ -69,6 +69,22 @@ def fetch_pull_request(repo, pr_number):
                        url=gh_pr.html_url,
                        body=gh_pr.body,
                        comments=comments)
+
+def fetch_organization(org):
+    """Fetch information about the given organization
+
+    Returns an object of type github.Organization.Organization (part of the python github
+    API)
+
+    Args:
+    org: string
+    """
+    gh_inst = _get_github_instance()
+    return gh_inst.get_organization(org)
+
+def _get_github_instance():
+    """Returns an instance of the Github class"""
+    return Github(login_or_token=_get_access_token())
 
 def _get_access_token():
     """Get a GitHub personal access token from the environment, if one is set.
