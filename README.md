@@ -26,9 +26,26 @@ To show all of the outstanding todo items in all comments in a pull request
 
     gh-pr-query -r REPO -p PR_NUMBER -t
 
+or:
+
+    gh-pr-query https://github.com/ORG/REPO/pull/PR_NUMBER -t
+
+To show all of the completed todo items in all comments in a pull request
+(i.e., all checked checkboxes):
+
+    gh-pr-query -r REPO -p PR_NUMBER -c
+
+or:
+
+    gh-pr-query https://github.com/ORG/REPO/pull/PR_NUMBER -c
+
 To show all comments in a pull request:
 
     gh-pr-query -r REPO -p PR_NUMBER -s
+
+or:
+
+    gh-pr-query https://github.com/ORG/REPO/pull/PR_NUMBER -s
 
 Output is sorted by date; for todos, all required todos are listed
 before optional todos. (Optional todos are denoted by starting a todo
