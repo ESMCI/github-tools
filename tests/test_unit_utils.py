@@ -36,6 +36,13 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(repo, 'ESMCI/github-tools')
         self.assertEqual(pr_number, 1357)
 
+    def test_splitPrUrl_success_trailingPound(self):
+        """A success test of split_pr_url with a trailing pound sign in the URL"""
+        (repo, pr_number) = split_pr_url(
+            'https://github.com/ESMCI/github-tools/pull/1357#issuecomment-123')
+        self.assertEqual(repo, 'ESMCI/github-tools')
+        self.assertEqual(pr_number, 1357)
+
     def test_splitPrUrl_failure_noPull(self):
         """Failure test of split_pr_url: no 'pull' in the URL"""
         (repo, pr_number) = split_pr_url('https://github.com/ESMCI/github-tools/1357')

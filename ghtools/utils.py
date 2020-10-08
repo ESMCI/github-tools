@@ -10,8 +10,9 @@ import re
 # The first capture group matches any number of non-slash characters followed by a slash
 # followed by any number of additional non-slash characters. This matches something like
 # 'ORG/REPO'. The second capture group matches the pull request number. The final group
-# ensures that the pull request number is followed by either a slash or the end of string.
-_PR_URL = re.compile(r'github\.com/([^/]+/[^/]+)/pull/([0-9]+)(/|$)')
+# ensures that the pull request number is followed by either a slash, a pound sign, or the
+# end of string.
+_PR_URL = re.compile(r'github\.com/([^/]+/[^/]+)/pull/([0-9]+)([/#]|$)')
 
 # ------------------------------------------------------------------------
 # Functions
