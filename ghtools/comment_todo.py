@@ -78,6 +78,9 @@ _TODO_COMPLETED_RE = _make_todo_re(_CHECKBOX_COMPLETED)
 _OPTIONAL = r"^\s*(?:optional:|\[optional\]|\(optional\))\s*"
 _OPTIONAL_RE = re.compile(_OPTIONAL, flags=re.IGNORECASE)
 
+_STARTS_WITH_QUOTE = r"^\s*" + _QUOTE
+_STARTS_WITH_QUOTE_RE = re.compile(_STARTS_WITH_QUOTE)
+
 # ------------------------------------------------------------------------
 # Functions
 # ------------------------------------------------------------------------
@@ -101,6 +104,12 @@ def search_line_for_todo(line, completed=False):
         return None
     return match.group(1)
 
+def is_line_quoted(line):
+    """Returns True if the given line is a quote, False otherwise"""
+    if _STARTS_WITH_QUOTE_RE.search(line) is None:
+        return False
+    return True
+
 # ------------------------------------------------------------------------
 # Begin class definition
 # ------------------------------------------------------------------------
@@ -108,7 +117,7 @@ def search_line_for_todo(line, completed=False):
 class CommentTodo:
     """Class for holding a single todo item extracted from a GitHub comment"""
 
-    def __init__(self, username, time_info, url, text, extra_info=None, completed=False):
+    def __init__(self, username, time_info, url, text, is_quoted, extra_info=None, completed=False):
         """Initialize a CommentTodo object.
 
         Args:
@@ -118,6 +127,8 @@ class CommentTodo:
         text: string - this should be a single line, containing a single to do item,
            without the leading '- [ ]' or similar; typically, it will be the output from
            the search_line_for_todo function
+        is_quoted: bool - whether this line is quoted; typically, it will be the output
+           from the is_line_quoted function
         extra_info: string - optional extra information to print in the output
            This isn't included in 'text' because it gets inserted thoughtfully in the output
         completed: boolean: Whether this is a completed todo
@@ -126,6 +137,7 @@ class CommentTodo:
         self._time_info = time_info
         self._url = url
         self._text, self._is_optional = self._strip_optional_prefix(text)
+        self._is_quoted = is_quoted
         self._extra_info = extra_info
         self._completed = completed
 
@@ -149,6 +161,8 @@ class CommentTodo:
         info
         """
         prefix = ""
+        if self.is_quoted():
+            prefix += "[QUOTED] "
         if self.is_completed():
             prefix += "[COMPLETED] "
         if self.is_optional():
@@ -160,6 +174,10 @@ class CommentTodo:
     def is_optional(self):
         """Returns true if this is an optional todo"""
         return self._is_optional
+
+    def is_quoted(self):
+        """Returns true if this is a quoted todo"""
+        return self._is_quoted
 
     def is_completed(self):
         """Returns true if this is a completed todo"""
@@ -182,11 +200,13 @@ class CommentTodo:
                "time_info={time_info}, "
                "url={url}, "
                "text={text}, "
+               "is_quoted={is_quoted}, "
                "extra_info={extra_info}, "
                "completed={completed})".format(username=repr(self._username),
                                                time_info=repr(self._time_info),
                                                url=repr(self._url),
                                                text=repr(self._get_text()),
+                                               is_quoted=repr(self._is_quoted),
                                                extra_info=repr(self._extra_info),
                                                completed=repr(self._completed)))
 

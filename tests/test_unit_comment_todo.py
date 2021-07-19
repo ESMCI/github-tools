@@ -6,7 +6,7 @@
 import unittest
 import datetime
 from ghtools.comment_time import CommentTime
-from ghtools.comment_todo import search_line_for_todo, CommentTodo
+from ghtools.comment_todo import search_line_for_todo, is_line_quoted, CommentTodo
 
 # Allow names that pylint doesn't like, because otherwise I find it hard
 # to make readable unit test names
@@ -213,6 +213,29 @@ class TestSearchLineForTodo(unittest.TestCase):
         result = search_line_for_todo("- [ ] todo", completed=True)
         self.assertIsNone(result)
 
+class TestIsLineQuoted(unittest.TestCase):
+    """Tests of is_line_quoted function"""
+
+    def test_isLineQuoted_lineStartsWithQuote(self):
+        """Quote character at the start of the line should yield True"""
+        result = is_line_quoted("> - [ ] todo")
+        self.assertTrue(result)
+
+    def test_isLineQuoted_lineStartsWithIndentedQuote(self):
+        """Indented quote character at the start of the line should yield True"""
+        result = is_line_quoted("  > - [ ] todo")
+        self.assertTrue(result)
+
+    def test_isLineQuoted_lineStartsWithQuoteNoSpaces(self):
+        """Quote character at the start of the line, with no space afterwards, should yield True"""
+        result = is_line_quoted(">- [ ] todo")
+        self.assertTrue(result)
+
+    def test_isLineQuoted_quoteAfterOtherChars(self):
+        """Quote character after other characters should yield False"""
+        result = is_line_quoted("a> - [ ] todo")
+        self.assertFalse(result)
+
 # ------------------------------------------------------------------------
 # Tests of the CommentTodo class
 # ------------------------------------------------------------------------
@@ -221,7 +244,7 @@ class TestCommentTodo(unittest.TestCase):
     """Tests of CommentTodo class"""
 
     @staticmethod
-    def _create_comment_todo(text=None, extra_info=None, completed=False):
+    def _create_comment_todo(text=None, is_quoted=False, extra_info=None, completed=False):
         """Returns a basic CommentTodo object
 
         If text is None, some default text will be used
@@ -234,6 +257,7 @@ class TestCommentTodo(unittest.TestCase):
                            time_info=time_info,
                            url="https://github.com/org/repo/1#issuecomment-2",
                            text=text,
+                           is_quoted=is_quoted,
                            extra_info=extra_info,
                            completed=completed)
 
@@ -251,6 +275,15 @@ class TestCommentTodo(unittest.TestCase):
         # This ability to recreate the object isn't a strict requirement, so if it gets
         # hard to maintain, we can drop it.
         t = self._create_comment_todo(text="[optional] Not necessary")
+        # pylint: disable=eval-used
+        t2 = eval(repr(t))
+        self.assertEqual(t2, t)
+
+    def test_repr_quoted_resultsInEqualObject(self):
+        """The repr of a CommentTodo object with is_quoted=True should result in equiv object"""
+        # This ability to recreate the object isn't a strict requirement, so if it gets
+        # hard to maintain, we can drop it.
+        t = self._create_comment_todo(is_quoted=True)
         # pylint: disable=eval-used
         t2 = eval(repr(t))
         self.assertEqual(t2, t)
@@ -336,6 +369,13 @@ class TestCommentTodo(unittest.TestCase):
                                       extra_info="Extra stuff",
                                       completed=True)
         self.assertEqual(t.get_full_text(), "[COMPLETED] [OPTIONAL] {Extra stuff} My text")
+
+    def test_getFullText_optionalAndExtraInfoAndQuoted(self):
+        """Test get_full_text with an optional todo that also has extra info and is quoted"""
+        t = self._create_comment_todo(text="[optional]  My text",
+                                      extra_info="Extra stuff",
+                                      is_quoted=True)
+        self.assertEqual(t.get_full_text(), "[QUOTED] [OPTIONAL] {Extra stuff} My text")
 
 if __name__ == '__main__':
     unittest.main()

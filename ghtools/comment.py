@@ -2,7 +2,7 @@
 """
 
 import textwrap
-from ghtools.comment_todo import search_line_for_todo, CommentTodo
+from ghtools.comment_todo import search_line_for_todo, is_line_quoted, CommentTodo
 from ghtools.utils import fill_multiparagraph
 from ghtools.constants import LINE_WIDTH, INDENT_LEVEL
 
@@ -53,11 +53,13 @@ class Comment:
         for line in self._content.splitlines():
             todo_text = search_line_for_todo(line, completed=completed)
             if todo_text is not None:
+                is_quoted = is_line_quoted(line)
                 todos.append(CommentTodo(
                     username=self._username,
                     time_info=self._time_info,
                     url=self._url,
                     text=todo_text,
+                    is_quoted=is_quoted,
                     extra_info=self._get_extra_info(),
                     completed=completed))
 
